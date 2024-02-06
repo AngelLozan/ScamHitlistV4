@@ -9,6 +9,41 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// @dev Search functionality
+
+app.get("/api/notes/search", async (req, res) => {
+  const { q } = req.query; //@dev ?q=hello
+
+  if (!q) {
+    return res.status(400).send("Query parameter required");
+  }
+
+  try {
+    const notes = await prisma.note.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: q.toString(),
+            },
+          },
+          {
+            content: {
+              contains: q.toString(),
+            },
+          },
+        ],
+      },
+    });
+
+    res.json(notes);
+
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
 app.get("/api/notes", async (req, res) => {
   res.json({ message: "success!" });
 });

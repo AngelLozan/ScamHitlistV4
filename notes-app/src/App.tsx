@@ -86,6 +86,11 @@ const App = () => {
 
   };
 
+  const handleReset = () => {
+    fetchNotes();
+    setReset(false);
+  }
+
 
   const handleCancel = () => {
     setTitle("");
@@ -95,10 +100,10 @@ const App = () => {
 
   const deleteNote = async (event: React.MouseEvent, noteId: number) => {
     event.stopPropagation();
-    const res = await fetch(`http://localhost:5000/api/notes/${noteId}`,{
+    const res = await fetch(`http://localhost:5000/api/notes/${noteId}`, {
       method: "DELETE"
     })
-    
+
     const updatedNotes = notes.filter((note) => note.id !== noteId);
     setNotes(updatedNotes);
   };
@@ -113,9 +118,29 @@ const App = () => {
     }
   };
 
+  const searchNotes = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!q) {
+      fetchNotes();
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/notes/search/?q=${q}`);
+      const notes: Note[] = await response.json();
+      setNotes(notes);
+      setQuery('');
+      setReset(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [q, setQuery] = useState('');
+  const [reset, setReset] = useState(false);
   const [notes, setNotes] = useState<Note[]>([
     // {
     //   id: 1,
@@ -154,6 +179,14 @@ const App = () => {
 
   return (
     <div className="app-container">
+      <form className="d-flex" onSubmit={(event) => searchNotes(event)}>
+        <input type="text" name="q" placeholder="Search by title" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+        {reset ? (
+          <input type="button" value="Reset" className="btn btn-primary" onClick={handleReset} />
+        ) : (
+          <input type="submit" value="Search" className="btn btn-primary" />
+        )}
+      </form>
       <form
         className="note-form"
         onSubmit={(event) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
