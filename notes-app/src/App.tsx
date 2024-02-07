@@ -1,8 +1,8 @@
 import React from 'react';
 import "./App.css";
-import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { All, ToBeReported, ReportedUrls, WatchList, FollowUp, Landing, Navbar } from "./components";
+import { useEffect, useState } from 'react'; // useState
+import { BrowserRouter, Routes, Route } from "react-router-dom"; // Navigate
+import { All, ToBeReported, ReportedUrls, WatchList, FollowUp, Landing, Navbar, Settings } from "./components";
 
 
 type Note = {
@@ -14,7 +14,7 @@ type Note = {
 
 const App = () => {
 
-  const handleAddNote = async (event: React.FormEvent) => {
+  const handleAddNote = async (event: React.FormEvent) : Promise<any> => {
     event.preventDefault();
     // const newNote: Note = {
     //   id: notes.length + 1,
@@ -75,7 +75,7 @@ const App = () => {
         }),
       })
       const updatedNote = await res.json();
-      const updatedNotesList = notes.map((note) => (note.id === selectedNote.id ? updatedNote : note));
+      const updatedNotesList = notes.map((note: Note) => (note.id === selectedNote.id ? updatedNote : note));
 
       setNotes(updatedNotesList);
       setTitle("");
@@ -175,60 +175,62 @@ const App = () => {
     //   content: "bla bla note6",
     // },
   ]);
+
+
   useEffect(() => {
     fetchNotes();
   }, [])
 
-  return (
-    <div className="app-container">
-      <form className="d-flex" onSubmit={(event) => searchNotes(event)}>
-        <input type="text" name="q" placeholder="Search by title" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
-        {reset ? (
-          <input type="button" value="Reset" className="btn btn-primary" onClick={handleReset} />
-        ) : (
-          <input type="submit" value="Search" className="btn btn-primary" />
-        )}
-      </form>
-      <form
-        className="note-form"
-        onSubmit={(event) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
-      >
-        <input
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Title"
-          required
-        ></input>
-        <textarea
-          value={content}
-          onChange={(event) => setContent(event.target.value)}
-          placeholder="Content"
-          rows={10}
-          required
-        ></textarea>
+  // return (
+  //   <div className="app-container">
+  //     <form className="d-flex" onSubmit={(event) => searchNotes(event)}>
+  //       <input type="text" name="q" placeholder="Search by title" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+  //       {reset ? (
+  //         <input type="button" value="Reset" className="btn btn-primary" onClick={handleReset} />
+  //       ) : (
+  //         <input type="submit" value="Search" className="btn btn-primary" />
+  //       )}
+  //     </form>
+  //     <form
+  //       className="note-form"
+  //       onSubmit={(event) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
+  //     >
+  //       <input
+  //         value={title}
+  //         onChange={(event) => setTitle(event.target.value)}
+  //         placeholder="Title"
+  //         required
+  //       ></input>
+  //       <textarea
+  //         value={content}
+  //         onChange={(event) => setContent(event.target.value)}
+  //         placeholder="Content"
+  //         rows={10}
+  //         required
+  //       ></textarea>
 
-        {selectedNote ? (
-          <div className="edit-buttons">
-            <button type="submit">Save</button>
-            <button onClick={handleCancel}>Cancel</button>
-          </div>
-        ) : (
-          <button type="submit">Add Note</button>
-        )}
-      </form>
-      <div className="notes-grid">
-        {notes.map((note) => (
-          <div key={note.id} className="note-item" onClick={() => handleNoteClick(note)}>
-            <div className="notes-header">
-              <button onClick={(event) => deleteNote(event, note.id)}>x</button>
-            </div>
-            <h2>{note.title}</h2>
-            <p>{note.content}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  //       {selectedNote ? (
+  //         <div className="edit-buttons">
+  //           <button type="submit">Save</button>
+  //           <button onClick={handleCancel}>Cancel</button>
+  //         </div>
+  //       ) : (
+  //         <button type="submit">Add Note</button>
+  //       )}
+  //     </form>
+  //     <div className="notes-grid">
+  //       {notes.map((note) => (
+  //         <div key={note.id} className="note-item" onClick={() => handleNoteClick(note)}>
+  //           <div className="notes-header">
+  //             <button onClick={(event) => deleteNote(event, note.id)}>x</button>
+  //           </div>
+  //           <h2>{note.title}</h2>
+  //           <p>{note.content}</p>
+  //         </div>
+  //       ))}
+  //     </div>
+  //   </div>
+  // );
 
   return (
 
