@@ -1,6 +1,8 @@
 import React from 'react';
 import "./App.css";
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { All, ToBeReported, ReportedUrls, WatchList, FollowUp, Landing, Navbar } from "./components";
 
 
 type Note = {
@@ -226,6 +228,47 @@ const App = () => {
         ))}
       </div>
     </div>
+  );
+
+  return (
+
+    <BrowserRouter>
+      <Navbar />
+
+      <Routes>
+
+        <Route
+          path="/"
+          element={<Landing />}
+        />
+        <Route
+          path="/all"
+          element={<All />}
+        />
+        <Route
+          path="/tobereported"
+          element={<ToBeReported />}
+        />
+        <Route
+          path="/reportedurls"
+          element={<ReportedUrls />}
+        />
+        <Route
+          path="/watchlist"
+          element={<WatchList />}
+        />
+        <Route
+          path="/followup"
+          element={<FollowUp />}
+        />
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
+
+      </Routes>
+    </BrowserRouter>
+
   );
 };
 
