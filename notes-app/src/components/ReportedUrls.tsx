@@ -1,6 +1,6 @@
 const ReportedUrls = () => {
   return (
-    <div>
+    <div className="p3 m-3">
       <h1>ReportedUrls</h1>
 
     </div>

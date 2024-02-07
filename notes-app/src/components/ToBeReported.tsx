@@ -1,6 +1,6 @@
 const ToBeReported = () => {
   return (
-    <div>
+    <div className="p3 m-3">
       <h1>ToBeReported</h1>
 
     </div>

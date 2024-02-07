@@ -1,6 +1,6 @@
 const Settings = () => {
   return (
-    <div>
+    <div className="p3 m-3">
       <h1>Settings</h1>
 
     </div>

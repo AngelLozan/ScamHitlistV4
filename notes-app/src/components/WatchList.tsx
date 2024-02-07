@@ -1,6 +1,6 @@
 const WatchList = () => {
   return (
-    <div>
+    <div className="p3 m-3">
       <h1>WatchList</h1>
 
     </div>

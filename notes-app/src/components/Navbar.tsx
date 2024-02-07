@@ -39,13 +39,13 @@ export default function Navbar() {
             <a href="/all">All Iocs</a>
           </li>
           <li>
-            <a href="/reportedurls">Google Forms</a>
+            <a href="/reportedurls">Reported Urls</a>
           </li>
           <li>
-            <a href="/tobereported">Public Domain Registry</a>
+            <a href="/tobereported">2B Reported</a>
           </li>
           <li>
-            <a href="/followup">CloudFlare</a>
+            <a href="/followup">Follow Up</a>
           </li>
           <li>
             <a href="/watchlist">Watchlist</a>
