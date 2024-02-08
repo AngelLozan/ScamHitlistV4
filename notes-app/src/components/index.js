@@ -6,3 +6,4 @@ export { default as Settings } from "./Settings";
 export { default as ToBeReported } from "./ToBeReported";
 export { default as FollowUp } from "./FollowUp";
 export { default as WatchList } from "./WatchList";
+export { default as ShowIoc } from "./ShowIoc";

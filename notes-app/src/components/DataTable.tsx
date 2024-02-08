@@ -1,66 +1,75 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-
+import ShowIoc from './ShowIoc'
 
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'url', headerName: 'URL', width: 130 },
+  { field: 'dateReported', headerName: 'Date Reported', width: 150 },
+  // { field: 'dateRemoved', headerName: 'Date Removed', width: 130 },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'dateRemoved',
+    headerName: 'Date Removed',
     type: 'number',
-    width: 90,
+    width: 150,
   },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
+  // {
+  //   field: 'fullName',
+  //   headerName: 'Full name',
+  //   description: 'This column has a value getter and is not sortable.',
+  //   sortable: false,
+  //   width: 160,
+  //   valueGetter: (params: GridValueGetterParams) =>
+  //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+  // },
 ];
 
 interface DataTableProps {
   rows: Row[];
+  // onRowClick: (rows: Row[]) => void;
 }
 
-type Row = {
+export type Row = {
   id: number;
   url: string;
-  firstName: string;
-  age: number;
+  dateReported: string;
+  dateRemoved: number;
 };
 
-// const rows = [
-//   // { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-//   // { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-//   // { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-//   // { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-//   // { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-//   // { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-//   // { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-//   // { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-//   // { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-// ];
+const DataTable: React.FC<DataTableProps> = ({ rows }) => {
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-const DataTable: React.FC<DataTableProps> = ({rows}) => {
+  const onRowClick = (event: number, rows: Row[]) => {
+    // console.log(rows[0].id);
+    console.log("EVENT: ", event);
+    const index = event - 1;
+    const id = rows[index].id;
+    setSelectedId(id);
+    return id;
+  }
+
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-      />
-    </div>
+    <>
+    {
+      typeof selectedId === 'number' ?
+        <ShowIoc id={selectedId}/> :
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            onRowClick={(e) => onRowClick(e.row.id, rows)}
+            pageSizeOptions={[5, 10]}
+            checkboxSelection
+          />
+        </div>
+    }
+  </>
   );
 }
 
