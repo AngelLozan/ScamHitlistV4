@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Note {
+  id      Int    @id @default(autoincrement())
+  title   String
+  content String
+}
+
+model Form {
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
+}
+
+model Host {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String
+}
+
+enum Status {
+  added
+  reported
+  resolved
+  official_url
+  watchlist
+}
+
+
+model Ioc {
+  id         Int      @id @default(autoincrement())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  removed    DateTime
+  status     Status   @default(added)
+  method_one String
+  method_two String
+  form       String
+  host       String
+  follow_up  DateTime
+  count      Int
+  comment    String
+  // zf_status  Boolean  @default(false)
+  // pt_status  Boolean  @default(false)
+  // ca_status  Boolean  @default(false)
+}
