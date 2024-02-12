@@ -82,7 +82,8 @@ app.get("/api/iocs/:id", async (req, res) => {
   } catch (error) {
     res.status(500).send("Oops, something went wrong");
   }
-})
+});
+
 
 app.put("/api/iocs/:id", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;

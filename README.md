@@ -78,6 +78,7 @@ ALTER COLUMN <column name> DROP NOT NULL;
 
 
 To do:
-- Configure server endpoints.
+- Configure server endpoints: Update & Create
+- Create Edit endpoint
 - Fix front end data model and table display
-- Fix seed command. 
+- Fix seed command.
