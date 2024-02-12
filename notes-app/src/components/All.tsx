@@ -64,7 +64,7 @@ const All = () => {
       <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
         <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
         {reset ? (
-          <input type="button" value="Reset" className="btn btn-primary" onClick={handleReset} />
+          <input type="button" value="Reset" className="btn btn-primary my-2" onClick={handleReset} />
         ) : (
           <input type="submit" value="Search" className="btn btn-primary my-2" />
         )}

@@ -73,10 +73,11 @@ ALTER COLUMN <column name> DROP NOT NULL;
 - Verify creation of tables with `\dt`
 - View table properties `\d+ "Table name"`
 - Exit with `\q`
-- `npx prisma db seed`
+- `npx prisma db seed` (currently not functional. Seed with migrate csv step above in pgsql terminal through heroku.)
 - Issues establishing connection to Database or DATABASE_URL not found error from schema, run `npx prisma generate` again.
 
 
 To do:
 - Configure server endpoints.
 - Fix front end data model and table display
+- Fix seed command. 

@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid'; //, GridValueGetterParams
 import ShowIoc from './ShowIoc'
 
 
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'url', headerName: 'URL', width: 130 },
-  { field: 'dateReported', headerName: 'Date Reported', width: 150 },
-  // { field: 'dateRemoved', headerName: 'Date Removed', width: 130 },
-  {
-    field: 'dateRemoved',
-    headerName: 'Date Removed',
-    type: 'number',
-    width: 150,
-  },
+  { field: 'id', headerName: 'ID', type: 'number', width: 70 },
+  { field: 'url', headerName: 'URL', width: 200 },
+  { field: 'created_at', headerName: 'Date Reported', width: 150 },
+  { field: 'removed_date', headerName: 'Date Removed',  width: 130 },
+  { field: 'status', headerName: 'Status', width: 130 },
+  { field: 'report_method_one', headerName: 'Method 1', width: 130 },
+  { field: 'report_method_two', headerName: 'Method 2', width: 130 },
+  { field: 'form', headerName: 'Form', width: 130 },
+  { field: 'host', headerName: 'Host', width: 130 },
+  { field: 'follow_up_date', headerName: 'Last follow up', width: 130 },
+  { field: 'follow_up_count', headerName: 'Follow ups', type: 'number', width: 130 },
+  { field: 'comments', headerName: 'Comments', width: 130 },
   // {
   //   field: 'fullName',
   //   headerName: 'Full name',
@@ -30,11 +32,28 @@ interface DataTableProps {
   // onRowClick: (rows: Row[]) => void;
 }
 
+enum Status {
+  added = 0,
+  reported,
+  resolved,
+  official_url,
+  watchlist
+}
+
 export type Row = {
   id: number;
   url: string;
-  dateReported: string;
-  dateRemoved: number;
+  created_at: Date;
+  updated_at: Date;
+  removed_date: Date;
+  status: Status;
+  report_method_one: string;
+  report_method_two: string;
+  form: string;
+  host: string;
+  follow_up_date: Date;
+  follow_up_count: number;
+  comments: string;
 };
 
 const DataTable: React.FC<DataTableProps> = ({ rows }) => {
