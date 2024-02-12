@@ -72,10 +72,10 @@ const iocsSeed = path.join(process.cwd(), "src", "data", "iocs.csv");
 //   );
 
 async function main(){
-  //${iocsSeed}
+ //@dev Attempted => FROM ${iocsSeed}. No success, error at param $1.
   try {
     const seedIoc = await prisma.$executeRaw`
-    COPY Ioc (id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
+    COPY Ioc(id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
     FROM '../data/iocs.csv',
     WITH DELIMITER ','
     Null AS 'null'
@@ -83,7 +83,7 @@ async function main(){
   `;
 
   // @dev: This works with sufficient permissions I believe. Need instance where perms are editable, not elephant sql+
-  // const seedIoc = await prisma.$executeRaw`\copy iocs(id,url,created_at,updated_at,removed_date,status,report_method_one,report_method_two,form,host,follow_up_date,follow_up_count,comments) FROM './lib/data.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;`
+  // const seedIoc = await prisma.$executeRaw`\copy iocs(id,url,created_at,updated_at,removed_date,status,report_method_one,report_method_two,form,host,follow_up_date,follow_up_count,comments) FROM './src/data/iocs.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;`
 
     console.log({ seedIoc });
   } catch (error) {
@@ -100,8 +100,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
-
-  // \copy iocs(id,url,created_at,updated_at,removed_date,status,report_method_one,report_method_two,form,host,follow_up_date,follow_up_count,comments) FROM './src/data/iocs.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;
-
-
