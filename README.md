@@ -57,12 +57,28 @@ CREATE SCHEMA public; <-- This reinstates the permissions so you can redo push s
 
 - Migrate CSV to database (in order of the column headers): `\copy "Ioc"(id,url,created_at,updated_at,removed_date,status,report_method_one,report_method_two,form,host,follow_up_date,follow_up_count,comments) FROM './src/data/iocs.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;`
 
+`\copy "Form"(name,url) FROM './src/data/forms.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;`
+
+`\copy "Host"(name,email) FROM './src/data/hosts.csv' WITH DELIMITER ',' NULL AS 'null' CSV HEADER;`
+
+- If you forget to set, in the prisma schema, to accept null values (use `?` after type in model) you can modify the tables:
+
+```
+ALTER TABLE "<name>"
+ALTER COLUMN <column name> DROP NOT NULL;
+```
+
 ## Seed db with prisma:
 - `npx prisma db push` (generate your Prisma client and create the database tables.)
 - Verify creation of tables with `\dt`
 - View table properties `\d+ "Table name"`
 - Exit with `\q`
-- `npx prisma db seed`
+- `npx prisma db seed` (currently not functional. Seed with migrate csv step above in pgsql terminal through heroku.)
+- Issues establishing connection to Database or DATABASE_URL not found error from schema, run `npx prisma generate` again.
+
 
 To do:
-Configure server endpoints.
+- Configure server endpoints: Update & Create
+- Create Edit endpoint
+- Fix front end data model and table display
+- Fix seed command.
