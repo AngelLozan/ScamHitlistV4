@@ -11,7 +11,7 @@ app.use(cors());
 
 // @dev Search functionality
 
-app.get("/api/notes/search", async (req, res) => {
+app.get("/api/iocs/search", async (req, res) => {
   const { q } = req.query; //@dev ?q=hello
 
   if (!q) {
@@ -19,7 +19,7 @@ app.get("/api/notes/search", async (req, res) => {
   }
 
   try {
-    const notes = await prisma.note.findMany({
+    const iocs = await prisma.note.findMany({
       where: {
         OR: [
           {
@@ -36,7 +36,7 @@ app.get("/api/notes/search", async (req, res) => {
       },
     });
 
-    res.json(notes);
+    res.json(iocs);
 
   } catch (error) {
     console.log(error);
@@ -44,16 +44,16 @@ app.get("/api/notes/search", async (req, res) => {
 
 });
 
-app.get("/api/notes", async (req, res) => {
+app.get("/api/", async (req, res) => {
   res.json({ message: "success!" });
 });
 
-app.get("/notes", async (req, res) => {
-  const notes = await prisma.note.findMany();
-  res.json(notes);
+app.get("/api/iocs", async (req, res) => {
+  const iocs = await prisma.ioc.findMany();
+  res.json(iocs);
 });
 
-app.post("/api/notes", async (req, res) => {
+app.post("/api/iocs", async (req, res) => {
   const { title, content } = req.body;
 
   if (!title || !content) {
@@ -71,7 +71,7 @@ app.post("/api/notes", async (req, res) => {
 });
 
 
-app.put("/api/notes/:id", async (req, res) => {
+app.put("/api/iocs/:id", async (req, res) => {
   const { title, content } = req.body;
   const id = parseInt(req.params.id);
 
@@ -95,7 +95,7 @@ app.put("/api/notes/:id", async (req, res) => {
 });
 
 
-app.delete("/api/notes/:id", async (req, res) => {
+app.delete("/api/iocs/:id", async (req, res) => {
   const id = parseInt(req.params.id);
 
   if (!id || isNaN(id)) {

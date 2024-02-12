@@ -14,17 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const path_1 = __importDefault(require("path"));
-const iocsSeed = path_1.default.join(process.cwd(), "src", "data", "iocs.csv");
 const prisma = new client_1.PrismaClient();
+const iocsSeed = path_1.default.join(process.cwd(), "src", "data", "iocs.csv");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const seedIoc = prisma.$executeRaw `
-  COPY "Ioc" (id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
-  FROM ${iocsSeed}
-  DELIMITER ','
-  CSV HEADER;
-`;
-        console.log({ seedIoc });
+        try {
+            const seedIoc = yield prisma.$executeRaw `
+    COPY Ioc(id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
+    FROM '../data/iocs.csv',
+    WITH DELIMITER ','
+    Null AS 'null'
+    CSV HEADER;
+  `;
+            console.log({ seedIoc });
+        }
+        catch (error) {
+            console.log(error);
+        }
     });
 }
 main()

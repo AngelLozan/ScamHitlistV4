@@ -28,7 +28,7 @@ const All = () => {
 
   const fetchIocs = async () => {
     try {
-      const response = await fetch("http://localhost:5000/iocs");
+      const response = await fetch("http://localhost:5000/api/iocs");
       const rows = await response.json();
       setIocs(rows);
     } catch (error) {
@@ -66,7 +66,7 @@ const All = () => {
         {reset ? (
           <input type="button" value="Reset" className="btn btn-primary" onClick={handleReset} />
         ) : (
-          <input type="submit" value="Search" className="btn btn-primary" />
+          <input type="submit" value="Search" className="btn btn-primary my-2" />
         )}
       </form>
       <DataTable rows={rows} />

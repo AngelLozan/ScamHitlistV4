@@ -74,6 +74,9 @@ ALTER COLUMN <column name> DROP NOT NULL;
 - View table properties `\d+ "Table name"`
 - Exit with `\q`
 - `npx prisma db seed`
+- Issues establishing connection to Database or DATABASE_URL not found error from schema, run `npx prisma generate` again.
+
 
 To do:
-Configure server endpoints.
+- Configure server endpoints.
+- Fix front end data model and table display

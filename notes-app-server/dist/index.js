@@ -19,13 +19,13 @@ const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-app.get("/api/notes/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { q } = req.query;
     if (!q) {
         return res.status(400).send("Query parameter required");
     }
     try {
-        const notes = yield prisma.note.findMany({
+        const iocs = yield prisma.note.findMany({
             where: {
                 OR: [
                     {
@@ -41,20 +41,20 @@ app.get("/api/notes/search", (req, res) => __awaiter(void 0, void 0, void 0, fun
                 ],
             },
         });
-        res.json(notes);
+        res.json(iocs);
     }
     catch (error) {
         console.log(error);
     }
 }));
-app.get("/api/notes", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/api/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ message: "success!" });
 }));
-app.get("/notes", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const notes = yield prisma.note.findMany();
-    res.json(notes);
+app.get("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const iocs = yield prisma.ioc.findMany();
+    res.json(iocs);
 }));
-app.post("/api/notes", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content } = req.body;
     if (!title || !content) {
         return res.status(400).send("title and content fields required");
@@ -69,7 +69,7 @@ app.post("/api/notes", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(500).send("Oops, something went wrong");
     }
 }));
-app.put("/api/notes/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content } = req.body;
     const id = parseInt(req.params.id);
     if (!title || !content) {
@@ -89,7 +89,7 @@ app.put("/api/notes/:id", (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.status(500).send("Oops, something went wrong");
     }
 }));
-app.delete("/api/notes/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     if (!id || isNaN(id)) {
         return res.status(400).send("ID field required");
