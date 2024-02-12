@@ -43,6 +43,20 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     }
   };
 
+  const deleteIoc = async (event: React.MouseEvent, iocId: number) => {
+    event.stopPropagation();
+    const res = await fetch(`http://localhost:5000/api/iocs/${iocId}`, {
+      method: "DELETE"
+    })
+    if(res.status === 204){
+      window.location.href = "http://localhost:3000/all";
+    }
+
+    // const updated = notes.filter((note) => note.id !== noteId);
+    // setNotes(updatedNotes);
+  };
+
+
   useEffect(() => {
 
     fetchIoc();
@@ -57,6 +71,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
         <p>Reported: {Ioc.created_at.toLocaleString()}</p>
         <p>Status: {Ioc.status}</p>
         <p>{Ioc.comments}</p>
+        <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, Ioc.id)} } className="btn btn-danger">Delete</button>
         </>
       ) : (
       <p>Something went wrong, please refresh the page.</p>

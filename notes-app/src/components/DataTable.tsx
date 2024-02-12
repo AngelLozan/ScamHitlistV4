@@ -16,15 +16,6 @@ const columns: GridColDef[] = [
   { field: 'follow_up_date', headerName: 'Last follow up', width: 130 },
   { field: 'follow_up_count', headerName: 'Follow ups', type: 'number', width: 130 },
   { field: 'comments', headerName: 'Comments', width: 130 },
-  // {
-  //   field: 'fullName',
-  //   headerName: 'Full name',
-  //   description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 160,
-  //   valueGetter: (params: GridValueGetterParams) =>
-  //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  // },
 ];
 
 interface DataTableProps {
