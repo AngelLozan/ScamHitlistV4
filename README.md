@@ -1,4 +1,4 @@
-# Simple Notes App with React, Node, Postgres
+# Simple CRUD App with React, Node, Postgres
 
 A simple project to refresh my memory on React, Node and explore TypeScript.
 
@@ -82,3 +82,4 @@ To do:
 - Create Edit endpoint
 - Fix front end data model and table display
 - Fix seed command.
+- Add form and host from db to select drop down in update & create forms

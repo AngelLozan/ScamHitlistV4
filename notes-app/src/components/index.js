@@ -7,3 +7,5 @@ export { default as ToBeReported } from "./ToBeReported";
 export { default as FollowUp } from "./FollowUp";
 export { default as WatchList } from "./WatchList";
 export { default as ShowIoc } from "./ShowIoc";
+export { default as EditIoc } from "./EditIoc";
+export { default as SearchBar } from "./SearchBar";

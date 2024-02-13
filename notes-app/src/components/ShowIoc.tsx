@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { Row } from "./DataTable";
+import EditIoc from "./EditIoc";
 
 enum Status {
   added = 0,
@@ -48,13 +48,13 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     const res = await fetch(`http://localhost:5000/api/iocs/${iocId}`, {
       method: "DELETE"
     })
-    if(res.status === 204){
+    if (res.status === 204) {
       window.location.href = "http://localhost:3000/all";
     }
-
     // const updated = notes.filter((note) => note.id !== noteId);
     // setNotes(updatedNotes);
   };
+
 
 
   useEffect(() => {
@@ -66,20 +66,22 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     <div className="p3 m-3">
       {Ioc ? (
         <>
-        <h1>Ioc: {Ioc.id}</h1>
-        <h3>{Ioc.url}</h3>
-        <p>Reported: {Ioc.created_at.toLocaleString()}</p>
-        <p>Status: {Ioc.status}</p>
-        <p>{Ioc.comments}</p>
-        <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, Ioc.id)} } className="btn btn-danger">Delete</button>
+          <h1>Ioc: {Ioc.id}</h1>
+          <h3>{Ioc.url}</h3>
+          <p>Reported: {Ioc.created_at.toLocaleString()}</p>
+          <p>Status: {Ioc.status}</p>
+          <p>{Ioc.comments}</p>
+          <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, Ioc.id) }} className="btn btn-danger">Delete</button>
+
+          <div className="m-3 display-flex">
+          < EditIoc id={Ioc.id}/>
+          </div>
+
         </>
       ) : (
-      <p>Something went wrong, please refresh the page.</p>
+        <p>Something went wrong, please refresh the page.</p>
       )
       }
-      {/* <h1>Ioc: {Ioc.id}</h1>
-      <p>{Ioc.url}</p>
-      <p>{Ioc.comments}</p> */}
     </div>
   );
 };
