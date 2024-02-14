@@ -43,16 +43,16 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [comments, setComment] = useState("");
 
   const handleCancel = () => {
-    setUrl(url);
-    setRemoved(removed_date);
-    setStatus(status);
-    setMethodOne(report_method_one);
-    setMethodTwo(report_method_two);
-    setForm(form);
-    setHost(host);
-    setFollowUp(follow_up_date);
-    setCount(follow_up_count)
-    setComment(comments);
+    setUrl("");
+    setRemoved(null);
+    setStatus("added");
+    setMethodOne("");
+    setMethodTwo("");
+    setForm("");
+    setHost("");
+    setFollowUp(null);
+    setCount(0)
+    setComment("");
   };
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
@@ -68,7 +68,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   };
 
 
-  const handleUpdateNote = async (event: React.FormEvent) => {
+  const handleUpdateIoc = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
@@ -115,7 +115,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       <div className='m-3'>
         <form
           className="ioc-form"
-          onSubmit={(event) => handleUpdateNote(event)}
+          onSubmit={(event) => handleUpdateIoc(event)}
         >
           <div className='mb-3'>
             <label htmlFor="url" className='form-label m-1'>Url</label>
@@ -214,10 +214,12 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
           <div className="d-flex justify-content-center">
             <button type="submit" className='btn btn-primary m-1'>Save</button>
             <button onClick={handleCancel} className='btn btn-info m-1'>Clear Form</button>
-            <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, id) }} className="btn btn-danger m-1">Delete</button>
           </div>
 
         </form>
+        <div className="d-flex justify-content-center">
+          <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, id) }} className="btn btn-danger m-1">Delete</button>
+        </div>
       </div>
     </>
   )

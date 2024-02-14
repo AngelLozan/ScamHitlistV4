@@ -54,13 +54,18 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     <div className="p3 m-3">
       {Ioc ? (
         <>
-          <h1>Ioc: {Ioc.id}</h1>
-          <h3>{Ioc.url}</h3>
-          <p>Reported: {Ioc.created_at.toLocaleString()}</p>
-          <p>Status: {Ioc.status}</p>
-          <p>{Ioc.comments}</p>
+          <div className="text-center">
+            <h3>Ioc: {Ioc.id}</h3>
+            <p>{Ioc.url}</p>
+            <p>Reported: {Ioc.created_at.toLocaleString()}</p>
+            <p>Status: {Ioc.status}</p>
+            <p>{Ioc.comments}</p>
+          </div>
+
+          <hr />
           <div className="m-3">
-          < EditIoc id={Ioc.id}/>
+            <h3 className="text-center">Edit Ioc:</h3>
+            < EditIoc id={Ioc.id} />
           </div>
         </>
       ) : (
