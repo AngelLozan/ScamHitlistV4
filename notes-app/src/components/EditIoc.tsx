@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -26,6 +26,18 @@ enum Status {
 //   comments: string;
 // }
 
+type Form = {
+  id: number;
+  name: string;
+  url: string;
+}
+
+type Host = {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface EditIocProps {
   id: number;
 }
@@ -41,6 +53,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [follow_up_date, setFollowUp] = useState<Date | null>(null);
   const [follow_up_count, setCount] = useState(0);
   const [comments, setComment] = useState("");
+  const [forms, setForms] = useState<Form[]>([]);
+  const [hosts, setHosts] = useState<Host[]>([]);
 
   const handleCancel = () => {
     setUrl("");
@@ -66,7 +80,6 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     // const updated = notes.filter((note) => note.id !== noteId);
     // setNotes(updatedNotes);
   };
-
 
   const handleUpdateIoc = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -109,6 +122,31 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchForms = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/forms");
+        const forms: Form[] = await response.json();
+        setForms(forms);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+
+    const fetchHosts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/hosts");
+        const hosts: Host[] = await response.json();
+        setHosts(hosts);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchForms();
+    fetchHosts();
+  }, []);
 
   return (
     <>
@@ -124,7 +162,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
               id="url"
               value={url}
               onChange={(event) => setUrl(event.target.value)}
-              required
+              // required
             ></input>
           </div>
 
@@ -167,22 +205,35 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="form" className='form-label m-1'>Form used</label>
-            <input
+
+            <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
+              {forms.map((form) => (
+                <option key={form.id} value={form.name}>{form.name}</option>
+              ))}
+            </select>
+
+            {/* <input
               id='form'
               value={form}
               onChange={(event) => setForm(event.target.value)}
               className='form-control'
-            ></input>
+            ></input> */}
           </div>
 
           <div className='mb-3'>
             <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
-            <input
+            <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
+              {hosts.map((host) => (
+                <option key={host.id} value={host.name}>{host.name}</option>
+              ))}
+            </select>
+
+            {/* <input
               id="host"
               value={host}
               onChange={(event) => setHost(event.target.value)}
               className='form-control'
-            ></input>
+            ></input> */}
           </div>
 
           <div className='mb-3'>
