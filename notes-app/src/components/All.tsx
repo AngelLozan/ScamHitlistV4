@@ -3,13 +3,7 @@ import { useEffect, useState } from "react"
 
 const All = () => {
   const [rows, setIocs] = useState<Row[]>([]);
-  const [reset, setReset] = useState(false);
   const [q, setQuery] = useState('');
-
-  const handleReset = () => {
-    fetchIocs();
-    setReset(false);
-  }
 
 
   const fetchIocs = async () => {
@@ -34,7 +28,7 @@ const All = () => {
       const rows: Row[] = await response.json();
       setIocs(rows);
       setQuery('');
-      setReset(true);
+      // setReset(true);
     } catch (error) {
       console.log(error);
     }
@@ -47,15 +41,7 @@ const All = () => {
   return (
     <div className="p3 m-3">
       <h1 className="text-center m-3"><a style={{ textDecoration: 'none' }} href="/all">All Iocs</a></h1>
-      <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
-        <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
-        {reset ? (
-          <input type="button" value="Reset" className="btn btn-primary my-2" onClick={handleReset} />
-        ) : (
-          <input type="submit" value="Search" className="btn btn-primary my-2" />
-        )}
-      </form>
-      <DataTable rows={rows} />
+      <DataTable rows={rows} searchIocs={searchIocs} q={q} setQuery={setQuery}  />
     </div>
   );
 };
