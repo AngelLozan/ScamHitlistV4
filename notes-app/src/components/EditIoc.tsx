@@ -55,6 +55,19 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     setComment(comments);
   };
 
+  const deleteIoc = async (event: React.MouseEvent, id: number) => {
+    event.stopPropagation();
+    const res = await fetch(`http://localhost:5000/api/iocs/${id}`, {
+      method: "DELETE"
+    })
+    if (res.status === 204) {
+      window.location.href = "http://localhost:3000/all";
+    }
+    // const updated = notes.filter((note) => note.id !== noteId);
+    // setNotes(updatedNotes);
+  };
+
+
   const handleUpdateNote = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -98,69 +111,115 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
 
   return (
-    <form
-      className="ioc-form"
-      onSubmit={(event) => handleUpdateNote(event)}
-    >
-      <input
-        value={url}
-        onChange={(event) => setUrl(event.target.value)}
-        placeholder="Url"
-        required
-      ></input>
-      <div>
-        <label htmlFor="DatePicker">Resolved date</label>
-        <DatePicker selected={removed_date} onChange={(date) => setRemoved(date)} />
-      </div>
-      <input
-        value={status}
-        onChange={(event) => setStatus(event.target.value)}
-        placeholder="Status"
-        required
-      ></input>
-      <input
-        value={report_method_one}
-        onChange={(event) => setMethodOne(event.target.value)}
-        placeholder="Report method one"
-        required
-      ></input>
-      <input
-        value={report_method_two}
-        onChange={(event) => setMethodTwo(event.target.value)}
-        placeholder="Report method two"
-      ></input>
-      <input
-        value={form}
-        onChange={(event) => setForm(event.target.value)}
-        placeholder="Form used"
-      ></input>
-      <input
-        value={host}
-        onChange={(event) => setHost(event.target.value)}
-        placeholder="Host"
-      ></input>
-      <div>
-        <label htmlFor="DatePicker">Follow up date</label>
-        <DatePicker selected={follow_up_date} onChange={(d) => setFollowUp(d)} />
-      </div>
-      <input
-        value={follow_up_count}
-        onChange={(event) => setCount(parseInt(event.target.value))}
-        placeholder="Follow up attempts"
-      ></input>
-      <input
-        value={comments}
-        onChange={(event) => setComment(event.target.value)}
-        placeholder="Comments"
-      ></input>
+    <>
+      <div className='m-3'>
+        <form
+          className="ioc-form"
+          onSubmit={(event) => handleUpdateNote(event)}
+        >
+          <div className='mb-3'>
+            <label htmlFor="url" className='form-label m-1'>Url</label>
+            <input
+              className='form-control'
+              id="url"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              required
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="DatePicker" className="m-1">Resolved date</label>
+            <DatePicker selected={removed_date} onChange={(date) => setRemoved(date)} />
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="status" className='form-label m-1'>Status</label>
+            <input
+              id="status"
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+              className='form-control'
+              required
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
+            <input
+              id="method1"
+              value={report_method_one}
+              onChange={(event) => setMethodOne(event.target.value)}
+              className='form-control'
+              required
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
+            <input
+              id="method2"
+              value={report_method_two}
+              onChange={(event) => setMethodTwo(event.target.value)}
+              className='form-control'
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="form" className='form-label m-1'>Form used</label>
+            <input
+              id='form'
+              value={form}
+              onChange={(event) => setForm(event.target.value)}
+              className='form-control'
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
+            <input
+              id="host"
+              value={host}
+              onChange={(event) => setHost(event.target.value)}
+              className='form-control'
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
+            <DatePicker selected={follow_up_date} onChange={(d) => setFollowUp(d)} />
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="count" className='form-label m-1'>Follow up count</label>
+            <input
+              id="count"
+              value={follow_up_count}
+              onChange={(event) => setCount(parseInt(event.target.value))}
+              className='form-control'
+            ></input>
+          </div>
+
+          <div className='mb-3'>
+            <label htmlFor="comments" className='form-label m-1'>Comments</label>
+            <input
+              id="comments"
+              value={comments}
+              onChange={(event) => setComment(event.target.value)}
+              className='form-control'
+            ></input>
+          </div>
 
 
-      <div className="edit-buttons">
-        <button type="submit" className='btn btn-primary'>Save</button>
-        <button onClick={handleCancel} className='btn btn-info'>Clear Form</button>
-      </div>
+          <div className="d-flex justify-content-center">
+            <button type="submit" className='btn btn-primary m-1'>Save</button>
+            <button onClick={handleCancel} className='btn btn-info m-1'>Clear Form</button>
+            <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, id) }} className="btn btn-danger m-1">Delete</button>
+          </div>
 
-    </form>
+        </form>
+      </div>
+    </>
   )
 }
 
