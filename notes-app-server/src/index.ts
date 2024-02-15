@@ -51,7 +51,15 @@ app.get("/api/iocs", async (req, res) => {
   res.json(iocs);
 });
 
+app.get("/api/forms", async (req, res) => {
+  const forms = await prisma.form.findMany();
+  res.json(forms);
+})
 
+app.get("/api/hosts", async (req, res) => {
+  const hosts = await prisma.host.findMany();
+  res.json(hosts);
+})
 
 app.post("/api/iocs", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;

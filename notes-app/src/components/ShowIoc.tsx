@@ -43,18 +43,6 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     }
   };
 
-  const deleteIoc = async (event: React.MouseEvent, iocId: number) => {
-    event.stopPropagation();
-    const res = await fetch(`http://localhost:5000/api/iocs/${iocId}`, {
-      method: "DELETE"
-    })
-    if (res.status === 204) {
-      window.location.href = "http://localhost:3000/all";
-    }
-    // const updated = notes.filter((note) => note.id !== noteId);
-    // setNotes(updatedNotes);
-  };
-
 
 
   useEffect(() => {
@@ -66,17 +54,20 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     <div className="p3 m-3">
       {Ioc ? (
         <>
-          <h1>Ioc: {Ioc.id}</h1>
-          <h3>{Ioc.url}</h3>
-          <p>Reported: {Ioc.created_at.toLocaleString()}</p>
-          <p>Status: {Ioc.status}</p>
-          <p>{Ioc.comments}</p>
-          <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, Ioc.id) }} className="btn btn-danger">Delete</button>
-
-          <div className="m-3 display-flex">
-          < EditIoc id={Ioc.id}/>
+          <div className="text-center">
+            <h3>Ioc: {Ioc.id}</h3>
+            <p>{Ioc.url}</p>
+            <p>Reported: {Ioc.created_at.toLocaleString().split("T", 1)[0]}</p>
+            <p>Status: {Ioc.status}</p>
+            <p>Comments: {Ioc.comments}</p>
+            <p>Report Method 1: {Ioc.report_method_one}</p>
           </div>
 
+          <hr />
+          <div className="m-3">
+            <h3 className="text-center">Edit Ioc:</h3>
+            < EditIoc id={Ioc.id} />
+          </div>
         </>
       ) : (
         <p>Something went wrong, please refresh the page.</p>

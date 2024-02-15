@@ -7,7 +7,7 @@ const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', type: 'number', width: 70 },
   { field: 'url', headerName: 'URL', width: 200 },
   { field: 'created_at', headerName: 'Date Reported', width: 150 },
-  { field: 'removed_date', headerName: 'Date Removed',  width: 130 },
+  { field: 'removed_date', headerName: 'Date Removed', width: 130 },
   { field: 'status', headerName: 'Status', width: 130 },
   { field: 'report_method_one', headerName: 'Method 1', width: 130 },
   { field: 'report_method_two', headerName: 'Method 2', width: 130 },
@@ -20,7 +20,9 @@ const columns: GridColDef[] = [
 
 interface DataTableProps {
   rows: Row[];
-  // onRowClick: (rows: Row[]) => void;
+  searchIocs: (event: React.FormEvent) => void;
+  q: string;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 enum Status {
@@ -47,8 +49,14 @@ export type Row = {
   comments: string;
 };
 
-const DataTable: React.FC<DataTableProps> = ({ rows }) => {
+const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery }) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [reset, setReset] = useState(false);
+
+  // const handleReset = () => {
+  //   fetchIocs();
+  //   setReset(false);
+  // }
 
   const onRowClick = (event: number, rows: Row[]) => {
     // console.log(rows[0].id);
@@ -61,25 +69,40 @@ const DataTable: React.FC<DataTableProps> = ({ rows }) => {
 
   return (
     <>
-    {
-      typeof selectedId === 'number' ?
-        <ShowIoc id={selectedId}/> :
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
-              },
-            }}
-            onRowClick={(e) => onRowClick(e.row.id, rows)}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-          />
-        </div>
-    }
-  </>
+      {
+        typeof selectedId === 'number' ?
+          <ShowIoc id={selectedId} /> :
+          <>
+            <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
+            { reset?
+              <input type="text" name="q" placeholder="Reset the search 👉" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+              : <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+          }
+
+          { reset?
+              <input type="submit" value="Reset" className="btn btn-primary my-2" onClick={() => setReset(false)}/>
+              : <input type="submit" value="Search" className="btn btn-primary my-2" onClick={() => setReset(true)}/>
+          }
+
+
+            </form>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                  },
+                }}
+                onRowClick={(e) => onRowClick(e.row.id, rows)}
+                pageSizeOptions={[5, 10]}
+                checkboxSelection
+              />
+            </div>
+          </>
+      }
+    </>
   );
 }
 

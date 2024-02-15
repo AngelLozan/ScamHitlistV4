@@ -54,6 +54,14 @@ app.get("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const iocs = yield prisma.ioc.findMany();
     res.json(iocs);
 }));
+app.get("/api/forms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const forms = yield prisma.form.findMany();
+    res.json(forms);
+}));
+app.get("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const hosts = yield prisma.host.findMany();
+    res.json(hosts);
+}));
 app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
     if (!url || !report_method_one) {
