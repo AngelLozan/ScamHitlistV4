@@ -10,21 +10,21 @@ enum Status {
   watchlist
 }
 
-// type Ioc = {
-//   id: number;
-//   url: string;
-//   created_at: Date;
-//   updated_at: Date;
-//   removed_date: Date;
-//   status: Status;
-//   report_method_one: string;
-//   report_method_two: string;
-//   form: string;
-//   host: string;
-//   follow_up_date: Date;
-//   follow_up_count: number;
-//   comments: string;
-// }
+type Ioc = {
+  id: number;
+  url: string;
+  created_at: Date;
+  updated_at: Date;
+  removed_date: Date;
+  status: Status;
+  report_method_one: string;
+  report_method_two: string;
+  form: string;
+  host: string;
+  follow_up_date: Date;
+  follow_up_count: number;
+  comments: string;
+}
 
 type Form = {
   id: number;
@@ -43,9 +43,10 @@ interface EditIocProps {
 }
 
 const EditIoc: React.FC<EditIocProps> = ({ id }) => {
+  const [theIoc, setTheIoc] = useState<Ioc>()
   const [url, setUrl] = useState("");
   const [removed_date, setRemoved] = useState<Date | null>(null);
-  const [status, setStatus] = useState("added");
+  const [status, setStatus] = useState<Status | null>(null);
   const [report_method_one, setMethodOne] = useState("");
   const [report_method_two, setMethodTwo] = useState("");
   const [form, setForm] = useState("");
@@ -55,18 +56,31 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
+  const [formattedRD, setFormattedRD] = useState("");
+  const [formattedFD, setFormattedFD] = useState("");
 
-  const handleCancel = () => {
-    setUrl("");
-    setRemoved(null);
-    setStatus("added");
-    setMethodOne("");
-    setMethodTwo("");
-    setForm("");
-    setHost("");
-    setFollowUp(null);
-    setCount(0)
-    setComment("");
+
+  const handleCancel = async () => {
+    setUrl(theIoc ? theIoc.url : "");
+    setRemoved(theIoc ? theIoc.removed_date : removed_date);
+    setMethodOne(theIoc ? theIoc.report_method_one : report_method_one);
+    setMethodTwo(theIoc ? theIoc.report_method_two : report_method_two);
+    setForm(theIoc ? theIoc.form : form);
+    setHost(theIoc ? theIoc.host : host);
+    setFollowUp(theIoc ? theIoc.follow_up_date : follow_up_date);
+    setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
+    setComment(theIoc ? theIoc.comments : comments);
+    setStatus(theIoc ? theIoc.status : status);
+    // setUrl("");
+    // setRemoved(null);
+    // setStatus(ioc ? ioc.status : Status.added );
+    // setMethodOne("");
+    // setMethodTwo("");
+    // setForm("");
+    // setHost("");
+    // setFollowUp(null);
+    // setCount(0)
+    // setComment("");
   };
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
@@ -104,6 +118,11 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
           comments,
         }),
       })
+      // if (condition) {
+
+      // } else {
+
+      // }
       // const updatedIoc = await res.json();
       // const updatedNotesList = notes.map((note: Note) => (note.id === selectedNote.id ? updatedNote : note));
 
@@ -122,28 +141,60 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     }
   };
 
+  const fetchIoc = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/iocs/${id}`);
+      const ioc: Ioc = await response.json();
+      console.log(ioc);
+      setTheIoc(ioc);
+      if (theIoc) {
+        setUrl(theIoc.url);
+        setRemoved(theIoc.removed_date);
+        // setStatus(theIoc ? theIoc.status : Status.added );
+        setMethodOne(theIoc.report_method_one);
+        setMethodTwo(theIoc.report_method_two);
+        setForm(theIoc.form);
+        setHost(theIoc.host);
+        setFollowUp(theIoc.follow_up_date);
+        setCount(theIoc.follow_up_count)
+        setComment(theIoc.comments);
+        setStatus(theIoc.status);
+
+        const formatRD = theIoc.removed_date.toString().split('T', 1)[0];
+        setFormattedRD(formatRD);
+        const formatFD = theIoc.follow_up_date.toString().split('T', 1)[0];
+        setFormattedFD(formatFD);
+      }
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchForms = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/forms");
+      const forms: Form[] = await response.json();
+      setForms(forms);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const fetchHosts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/hosts");
+      const hosts: Host[] = await response.json();
+      setHosts(hosts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchForms = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/forms");
-        const forms: Form[] = await response.json();
-        setForms(forms);
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-
-    const fetchHosts = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/hosts");
-        const hosts: Host[] = await response.json();
-        setHosts(hosts);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
+    fetchIoc();
     fetchForms();
     fetchHosts();
   }, []);
@@ -160,36 +211,38 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <input
               className='form-control'
               id="url"
-              value={url}
+              value={theIoc ? theIoc.url : url}
               onChange={(event) => setUrl(event.target.value)}
-              // required
+            // required
             ></input>
           </div>
 
           <div className='mb-3'>
             <label htmlFor="DatePicker" className="m-1">Resolved date</label>
-            <DatePicker selected={removed_date} onChange={(date) => setRemoved(date)} />
+            <DatePicker selected={theIoc ? theIoc.removed_date : removed_date} onChange={(date) => setRemoved(date)} />
           </div>
 
           <div className='mb-3'>
             <label htmlFor="status" className='form-label m-1'>Status</label>
-            <input
-              id="status"
-              value={status}
-              onChange={(event) => setStatus(event.target.value)}
-              className='form-control'
-              required
-            ></input>
+
+            <select name="status" id="status" className='form-select' onChange={(event) => setStatus(parseInt(event.target.value) as Status)}>
+              <option value={Status.added}>Added</option>
+              <option value={Status.reported}>Reported</option>
+              <option value={Status.resolved}>Resolved</option>
+              <option value={Status.official_url}>Our Url</option>
+              <option value={Status.watchlist}>Watchlist</option>
+            </select>
+
           </div>
 
           <div className='mb-3'>
             <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
             <input
               id="method1"
-              value={report_method_one}
+              value={theIoc ? theIoc.report_method_one : report_method_one}
               onChange={(event) => setMethodOne(event.target.value)}
               className='form-control'
-              required
+            // required
             ></input>
           </div>
 
@@ -197,7 +250,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
             <input
               id="method2"
-              value={report_method_two}
+              value={theIoc ? theIoc.report_method_two : report_method_two}
               onChange={(event) => setMethodTwo(event.target.value)}
               className='form-control'
             ></input>
@@ -277,3 +330,5 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 }
 
 export default EditIoc;
+
+//defaultValue={ioc? ioc.status : status }
