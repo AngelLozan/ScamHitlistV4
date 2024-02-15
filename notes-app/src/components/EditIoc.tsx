@@ -1,14 +1,15 @@
+import { debug } from 'console';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 
-enum Status {
-  added = 0,
-  reported,
-  resolved,
-  official_url,
-  watchlist
-}
+// enum Status {
+//   added = 0,
+//   reported,
+//   resolved,
+//   official_url,
+//   watchlist
+// }
 
 type Ioc = {
   id: number;
@@ -16,7 +17,7 @@ type Ioc = {
   created_at: Date;
   updated_at: Date;
   removed_date: Date;
-  status: Status;
+  status: string;
   report_method_one: string;
   report_method_two: string;
   form: string;
@@ -46,7 +47,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [theIoc, setTheIoc] = useState<Ioc>()
   const [url, setUrl] = useState("");
   const [removed_date, setRemoved] = useState<Date | null>(null);
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState("");
   const [report_method_one, setMethodOne] = useState("");
   const [report_method_two, setMethodTwo] = useState("");
   const [form, setForm] = useState("");
@@ -56,18 +57,19 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [formattedRD, setFormattedRD] = useState("");
-  const [formattedFD, setFormattedFD] = useState("");
+  const [formattedRD, setFormattedRD] = useState(new Date('2022-01-01T00:00:00.000Z'));
+  const [formattedFD, setFormattedFD] = useState(new Date());
 
 
   const handleCancel = async () => {
+    console.log("THE IOC: ", theIoc);
     setUrl(theIoc ? theIoc.url : "");
-    setRemoved(theIoc ? theIoc.removed_date : removed_date);
+    setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
     setMethodOne(theIoc ? theIoc.report_method_one : report_method_one);
     setMethodTwo(theIoc ? theIoc.report_method_two : report_method_two);
     setForm(theIoc ? theIoc.form : form);
     setHost(theIoc ? theIoc.host : host);
-    setFollowUp(theIoc ? theIoc.follow_up_date : follow_up_date);
+    setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
     setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
     setComment(theIoc ? theIoc.comments : comments);
     setStatus(theIoc ? theIoc.status : status);
@@ -108,14 +110,14 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
           id,
           url,
           removed_date,
-          status: Status,
+          status,
           report_method_one,
           report_method_two,
           form,
           host,
           follow_up_date,
           follow_up_count,
-          comments,
+          comments
         }),
       })
       // if (condition) {
@@ -159,10 +161,12 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
         setCount(theIoc.follow_up_count)
         setComment(theIoc.comments);
         setStatus(theIoc.status);
+        console.log("Status: ", theIoc.status);
 
-        const formatRD = theIoc.removed_date.toString().split('T', 1)[0];
+        const formatRD = new Date(theIoc.removed_date);
+
         setFormattedRD(formatRD);
-        const formatFD = theIoc.follow_up_date.toString().split('T', 1)[0];
+        const formatFD = new Date(theIoc.follow_up_date);
         setFormattedFD(formatFD);
       }
 
@@ -219,18 +223,19 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="DatePicker" className="m-1">Resolved date</label>
-            <DatePicker selected={theIoc ? theIoc.removed_date : removed_date} onChange={(date) => setRemoved(date)} />
+            <DatePicker selected={theIoc ? formattedRD : removed_date} onChange={(date) => setRemoved(date)} />
           </div>
 
           <div className='mb-3'>
             <label htmlFor="status" className='form-label m-1'>Status</label>
 
-            <select name="status" id="status" className='form-select' onChange={(event) => setStatus(parseInt(event.target.value) as Status)}>
-              <option value={Status.added}>Added</option>
-              <option value={Status.reported}>Reported</option>
-              <option value={Status.resolved}>Resolved</option>
-              <option value={Status.official_url}>Our Url</option>
-              <option value={Status.watchlist}>Watchlist</option>
+            <select name="status" id="status" className='form-select' onChange={(event) => setStatus(event.target.value)}>
+              {theIoc && theIoc.status === "added" ? <option value={"added"} selected>Added</option> : <option value={"added"} >Added</option>}
+              {theIoc && theIoc.status === "reported" ? <option value={"reported"} selected>Reported</option> : <option value={"reported"} >Reported</option>}
+              {theIoc && theIoc.status === "resolved" ? <option value={"resolved"} selected>Resolved</option> : <option value={"resolved"} >Resolved</option>}
+              {theIoc && theIoc.status === "official_url" ? <option value={"official_url"} selected>Our Url</option> : <option value={"official_url"} >Our Url</option>}
+              {theIoc && theIoc.status === "watchlist" ? <option value={"watchlist"} selected>Watchlist</option> : <option value={"watchlist"} >Watchlist</option>}
+
             </select>
 
           </div>
@@ -291,14 +296,15 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
-            <DatePicker selected={follow_up_date} onChange={(d) => setFollowUp(d)} />
+            <DatePicker selected={theIoc? formattedFD : follow_up_date } onChange={(d) => setFollowUp(d)} />
           </div>
 
           <div className='mb-3'>
             <label htmlFor="count" className='form-label m-1'>Follow up count</label>
             <input
               id="count"
-              value={follow_up_count}
+              type="text"
+              value={theIoc? theIoc.follow_up_count: follow_up_count }
               onChange={(event) => setCount(parseInt(event.target.value))}
               className='form-control'
             ></input>
@@ -308,7 +314,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="comments" className='form-label m-1'>Comments</label>
             <input
               id="comments"
-              value={comments}
+              value={theIoc? theIoc.comments : comments}
               onChange={(event) => setComment(event.target.value)}
               className='form-control'
             ></input>

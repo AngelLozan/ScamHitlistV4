@@ -57,7 +57,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
           <div className="text-center">
             <h3>Ioc: {Ioc.id}</h3>
             <p>{Ioc.url}</p>
-            <p>Reported: {Ioc.created_at.toLocaleString()}</p>
+            <p>Reported: {Ioc.created_at.toLocaleString().split("T", 1)[0]}</p>
             <p>Status: {Ioc.status}</p>
             <p>Comments: {Ioc.comments}</p>
             <p>Report Method 1: {Ioc.report_method_one}</p>
