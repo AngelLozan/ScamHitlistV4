@@ -66,6 +66,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
           <hr />
           <div className="m-3">
             <h3 className="text-center">Edit Ioc:</h3>
+            <p className="text-center">Changes only apply after you save them.</p>
             < EditIoc id={Ioc.id} />
           </div>
         </>

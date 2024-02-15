@@ -45,23 +45,24 @@ interface EditIocProps {
 
 const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [theIoc, setTheIoc] = useState<Ioc>()
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(theIoc ? theIoc.url : "");
   const [removed_date, setRemoved] = useState<Date | null>(null);
   const [status, setStatus] = useState("");
-  const [report_method_one, setMethodOne] = useState("");
-  const [report_method_two, setMethodTwo] = useState("");
+  const [report_method_one, setMethodOne] = useState(theIoc ? theIoc.report_method_one : "");
+  const [report_method_two, setMethodTwo] = useState(theIoc ? theIoc.report_method_two : "");
   const [form, setForm] = useState("");
   const [host, setHost] = useState("");
   const [follow_up_date, setFollowUp] = useState<Date | null>(null);
-  const [follow_up_count, setCount] = useState(0);
-  const [comments, setComment] = useState("");
+  const [follow_up_count, setCount] = useState(theIoc ? theIoc.follow_up_count : 0);
+  const [comments, setComment] = useState(theIoc ? theIoc.comments : "");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [formattedRD, setFormattedRD] = useState(new Date('2022-01-01T00:00:00.000Z'));
   const [formattedFD, setFormattedFD] = useState(new Date());
 
 
-  const handleCancel = async () => {
+  const handleCancel = async (event: React.MouseEvent) => {
+    event.preventDefault();
     console.log("THE IOC: ", theIoc);
     setUrl(theIoc ? theIoc.url : "");
     setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
@@ -73,16 +74,6 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
     setComment(theIoc ? theIoc.comments : comments);
     setStatus(theIoc ? theIoc.status : status);
-    // setUrl("");
-    // setRemoved(null);
-    // setStatus(ioc ? ioc.status : Status.added );
-    // setMethodOne("");
-    // setMethodTwo("");
-    // setForm("");
-    // setHost("");
-    // setFollowUp(null);
-    // setCount(0)
-    // setComment("");
   };
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
@@ -100,33 +91,35 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const handleUpdateIoc = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    const bodyJson = JSON.stringify({
+      id,
+      url,
+      removed_date,
+      status,
+      report_method_one,
+      report_method_two,
+      form,
+      host,
+      follow_up_date,
+      follow_up_count,
+      comments
+    });
+
+    console.log("Body json: ", bodyJson);
+
     try {
-      await fetch(`http://localhost:5000/api/iocs/${id}`, {
+      let res = await fetch(`http://localhost:5000/api/iocs/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id,
-          url,
-          removed_date,
-          status,
-          report_method_one,
-          report_method_two,
-          form,
-          host,
-          follow_up_date,
-          follow_up_count,
-          comments
-        }),
+        body: bodyJson,
       })
-      // if (condition) {
 
-      // } else {
-
-      // }
-      // const updatedIoc = await res.json();
-      // const updatedNotesList = notes.map((note: Note) => (note.id === selectedNote.id ? updatedNote : note));
+      if (!res.ok) {
+        const errorMsg = await res.text();
+        displayFlashMessage(errorMsg);
+      }
 
       setUrl(url);
       setRemoved(removed_date);
@@ -147,34 +140,52 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     try {
       const response = await fetch(`http://localhost:5000/api/iocs/${id}`);
       const ioc: Ioc = await response.json();
-      console.log(ioc);
+      console.log("Fetch ioc: ", ioc);
       setTheIoc(ioc);
-      if (theIoc) {
-        setUrl(theIoc.url);
-        setRemoved(theIoc.removed_date);
-        // setStatus(theIoc ? theIoc.status : Status.added );
-        setMethodOne(theIoc.report_method_one);
-        setMethodTwo(theIoc.report_method_two);
-        setForm(theIoc.form);
-        setHost(theIoc.host);
-        setFollowUp(theIoc.follow_up_date);
-        setCount(theIoc.follow_up_count)
-        setComment(theIoc.comments);
-        setStatus(theIoc.status);
-        console.log("Status: ", theIoc.status);
+      setUrl(ioc.url);
+      setRemoved(Object.is(ioc.removed_date,null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date );
+      setMethodOne(ioc.report_method_one);
+      setMethodTwo(ioc.report_method_two);
+      setForm(ioc.form);
+      setHost(ioc.host);
+      setFollowUp(ioc.follow_up_date);
+      setCount(ioc.follow_up_count)
+      setComment(ioc.comments);
+      setStatus(ioc.status);
+      console.log("Status: ", ioc.status);
 
-        const formatRD = new Date(theIoc.removed_date);
+      const formatRD = new Date(Object.is(ioc.removed_date,null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
 
-        setFormattedRD(formatRD);
-        const formatFD = new Date(theIoc.follow_up_date);
-        setFormattedFD(formatFD);
-      }
-
-
+      setFormattedRD(formatRD);
+      const formatFD = new Date(Object.is(ioc.follow_up_date,null) ? new Date() : ioc.follow_up_date);
+      setFormattedFD(formatFD);
     } catch (error) {
       console.log(error);
     }
   }
+
+  const displayFlashMessage = (message: string) => {
+    const flashElement = document.createElement("div");
+    flashElement.className = `alert alert-info alert-dismissible fade show m-1 position-fixed top-0 end-0`;
+    flashElement.role = "alert";
+    flashElement.textContent = `👀 ${message}`;
+
+    const button = document.createElement("button");
+    button.className = "btn-close";
+    button.setAttribute("data-bs-dismiss", "alert");
+
+    button.addEventListener("click", () => {
+      flashElement.remove();
+    });
+
+    flashElement.appendChild(button);
+    document.body.appendChild(flashElement);
+
+    setTimeout(() => {
+      flashElement.remove();
+    }, 5000);
+  }
+
 
   const fetchForms = async () => {
     try {
@@ -215,7 +226,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <input
               className='form-control'
               id="url"
-              value={theIoc ? theIoc.url : url}
+              type="text"
+              value={url}
               onChange={(event) => setUrl(event.target.value)}
             // required
             ></input>
@@ -244,7 +256,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
             <input
               id="method1"
-              value={theIoc ? theIoc.report_method_one : report_method_one}
+              value={report_method_one}
               onChange={(event) => setMethodOne(event.target.value)}
               className='form-control'
             // required
@@ -255,7 +267,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
             <input
               id="method2"
-              value={theIoc ? theIoc.report_method_two : report_method_two}
+              value={report_method_two}
               onChange={(event) => setMethodTwo(event.target.value)}
               className='form-control'
             ></input>
@@ -296,7 +308,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
-            <DatePicker selected={theIoc? formattedFD : follow_up_date } onChange={(d) => setFollowUp(d)} />
+            <DatePicker selected={theIoc ? formattedFD : follow_up_date} onChange={(d) => setFollowUp(d)} />
           </div>
 
           <div className='mb-3'>
@@ -304,7 +316,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <input
               id="count"
               type="text"
-              value={theIoc? theIoc.follow_up_count: follow_up_count }
+              value={follow_up_count}
               onChange={(event) => setCount(parseInt(event.target.value))}
               className='form-control'
             ></input>
@@ -314,7 +326,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="comments" className='form-label m-1'>Comments</label>
             <input
               id="comments"
-              value={theIoc? theIoc.comments : comments}
+              value={comments}
               onChange={(event) => setComment(event.target.value)}
               className='form-control'
             ></input>
@@ -323,7 +335,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className="d-flex justify-content-center">
             <button type="submit" className='btn btn-primary m-1'>Save</button>
-            <button onClick={handleCancel} className='btn btn-info m-1'>Clear Form</button>
+            <button onClick={handleCancel} className='btn btn-secondary m-1'>Reset Changes</button>
           </div>
 
         </form>

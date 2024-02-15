@@ -61,8 +61,12 @@ const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery })
   const onRowClick = (event: number, rows: Row[]) => {
     // console.log(rows[0].id);
     console.log("EVENT: ", event);
-    const index = event - 1;
-    const id = rows[index].id;
+    // const index = event - 1;
+    // console.log(rows);
+    // const id = rows[index].id;
+    const ioc = rows.find(row => row.id === event);
+    console.log("IOC: ", ioc);
+    const id = ioc? ioc.id : event;
     setSelectedId(id);
     return id;
   }

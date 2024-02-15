@@ -268,7 +268,6 @@ button[type=submit]:hover {
     flex-direction: column;
     width: 100%;
     height: calc(100vh - 77px);
-    background-color: white;
     border-top: 1px solid black;
     display: none;
   }
