@@ -61,6 +61,7 @@ app.get("/api/hosts", async (req, res) => {
   res.json(hosts);
 })
 
+// @dev Create
 app.post("/api/iocs", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
 
@@ -92,7 +93,7 @@ app.get("/api/iocs/:id", async (req, res) => {
   }
 });
 
-
+// @dev Update
 app.put("/api/iocs/:id", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
   const id = parseInt(req.params.id);

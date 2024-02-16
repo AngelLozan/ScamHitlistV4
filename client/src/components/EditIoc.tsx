@@ -53,7 +53,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [form, setForm] = useState("");
   const [host, setHost] = useState("");
   const [follow_up_date, setFollowUp] = useState<Date | null>(null);
-  const [follow_up_count, setCount] = useState(theIoc ? theIoc.follow_up_count : 0);
+  const [follow_up_count, setCount] = useState(0);
   const [comments, setComment] = useState(theIoc ? theIoc.comments : "");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
@@ -119,6 +119,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       if (!res.ok) {
         const errorMsg = await res.text();
         displayFlashMessage(errorMsg);
+      } else {
+        displayFlashMessage("Successfully updated the IOC ✅");
       }
 
       setUrl(url);
@@ -143,7 +145,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       console.log("Fetch ioc: ", ioc);
       setTheIoc(ioc);
       setUrl(ioc.url);
-      setRemoved(Object.is(ioc.removed_date,null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date );
+      setRemoved(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
       setMethodOne(ioc.report_method_one);
       setMethodTwo(ioc.report_method_two);
       setForm(ioc.form);
@@ -154,10 +156,10 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       setStatus(ioc.status);
       console.log("Status: ", ioc.status);
 
-      const formatRD = new Date(Object.is(ioc.removed_date,null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
+      const formatRD = new Date(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
 
       setFormattedRD(formatRD);
-      const formatFD = new Date(Object.is(ioc.follow_up_date,null) ? new Date() : ioc.follow_up_date);
+      const formatFD = new Date(Object.is(ioc.follow_up_date, null) ? new Date() : ioc.follow_up_date);
       setFormattedFD(formatFD);
     } catch (error) {
       console.log(error);
@@ -277,33 +279,23 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="form" className='form-label m-1'>Form used</label>
 
             <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
+              <option value="N/A">N/A</option>
               {forms.map((form) => (
-                <option key={form.id} value={form.name}>{form.name}</option>
+                <option key={form.id} selected={theIoc && theIoc.form === form.name ? true : false} value={form.name}>{form.name}</option>
               ))}
             </select>
 
-            {/* <input
-              id='form'
-              value={form}
-              onChange={(event) => setForm(event.target.value)}
-              className='form-control'
-            ></input> */}
           </div>
 
           <div className='mb-3'>
             <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
             <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
+              <option value="N/A">N/A</option>
               {hosts.map((host) => (
-                <option key={host.id} value={host.name}>{host.name}</option>
+                <option key={host.id} selected={theIoc && theIoc.host === host.name ? true : false} value={host.name}>{host.name}</option>
               ))}
             </select>
 
-            {/* <input
-              id="host"
-              value={host}
-              onChange={(event) => setHost(event.target.value)}
-              className='form-control'
-            ></input> */}
           </div>
 
           <div className='mb-3'>
@@ -315,21 +307,28 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             <label htmlFor="count" className='form-label m-1'>Follow up count</label>
             <input
               id="count"
-              type="text"
+              type="number"
               value={follow_up_count}
-              onChange={(event) => setCount(parseInt(event.target.value))}
+              onChange={(event) => {
+                const value = parseInt(event.target.value);
+                if (!isNaN(value)) { // Check if the entered value is a valid number
+                  setCount(value);
+                }
+                setCount(parseInt(event.target.value))
+              }}
               className='form-control'
             ></input>
           </div>
 
           <div className='mb-3'>
             <label htmlFor="comments" className='form-label m-1'>Comments</label>
-            <input
+            <textarea
               id="comments"
+              style={{ minHeight: '100px' }}
               value={comments}
               onChange={(event) => setComment(event.target.value)}
               className='form-control'
-            ></input>
+            />
           </div>
 
 
