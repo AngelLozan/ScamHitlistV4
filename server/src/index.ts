@@ -66,7 +66,7 @@ app.post("/api/iocs", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
 
   if (!url || !report_method_one) {
-    return res.status(400).send("Url and Method 1 fields are required");
+    return res.status(400).send("👀 Url and Method 1 fields are required");
   }
 
   try {
@@ -75,10 +75,11 @@ app.post("/api/iocs", async (req, res) => {
     });
     res.json(ioc);
   } catch (error) {
-    res.status(500).send("Oops, something went wrong");
+    res.status(500).send("👀 Oops, something went wrong");
   }
 });
 
+// @dev Show
 app.get("/api/iocs/:id", async (req, res) => {
   const ioc_id = parseInt(req.params.id);
   try {
@@ -98,11 +99,11 @@ app.put("/api/iocs/:id", async (req, res) => {
   const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
   const id = parseInt(req.params.id);
   if (!url || !report_method_one) {
-    return res.status(400).send("Url and Method 1 fields are required");
+    return res.status(400).send("👀 Url and Method 1 fields are required");
   }
 
   if (!id || isNaN(id)) {
-    return res.status(400).send("ID must be a valid number");
+    return res.status(400).send("👀 ID must be a valid number");
   }
 
   try {
