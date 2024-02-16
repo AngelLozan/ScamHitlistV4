@@ -19,13 +19,13 @@ type Host = {
 
 const Landing = () => {
   const [url, setUrl] = useState("");
-  const [removed_date, setRemoved] = useState<Date | null>(null);
+  const [removed_date, setRemoved] = useState();
   const [status, setStatus] = useState("");
   const [report_method_one, setMethodOne] = useState("");
   const [report_method_two, setMethodTwo] = useState("");
   const [form, setForm] = useState("");
   const [host, setHost] = useState("");
-  const [follow_up_date, setFollowUp] = useState<Date | null>(null);
+  const [follow_up_date, setFollowUp] = useState<Date>();
   const [follow_up_count, setCount] = useState(0);
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
@@ -147,150 +147,152 @@ const Landing = () => {
 
   return (
     <>
-      <div className='text-center m-3'>
-        <h1>Add an Ioc</h1>
-      </div>
-      <div className='m-3'>
-        <form
-          className="ioc-form"
-          onSubmit={(event) => handleAddIoc(event)}
-        >
-          <div className='mb-3'>
-            <label htmlFor="url" className='form-label m-1'>Url</label>
-            <input
-              className='form-control'
-              id="url"
-              type="text"
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-            // required
-            ></input>
-          </div>
+      <div className='p-5 m-3'>
+        <div className='text-center m-3'>
+          <h1>Add an Ioc</h1>
+        </div>
+        <div className='m-3'>
+          <form
+            className="ioc-form"
+            onSubmit={(event) => handleAddIoc(event)}
+          >
+            <div className='mb-3'>
+              <label htmlFor="url" className='form-label m-1'>Url</label>
+              <input
+                className='form-control'
+                id="url"
+                type="text"
+                value={url}
+                onChange={(event) => setUrl(event.target.value)}
+              // required
+              ></input>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="DatePicker" className="m-1">Resolved date</label>
-            <DatePicker onChange={(date) => setRemoved(date)} />
-          </div>
+            <div className='mb-3'>
+              <label htmlFor="DatePicker" className="m-1">Resolved date</label>
+              <DatePicker selected={removed_date} onChange={(date: Date) => setRemoved(date)} />
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="status" className='form-label m-1'>Status</label>
+            <div className='mb-3'>
+              <label htmlFor="status" className='form-label m-1'>Status</label>
 
-            <select name="status" id="status" className='form-select' onChange={(event) => setStatus(event.target.value)}>
-              <option value={"added"} >Added</option>
-              <option value={"reported"} >Reported</option>
-              <option value={"resolved"} >Resolved</option>
-              <option value={"official_url"} >Our Url</option>
-              <option value={"watchlist"} >Watchlist</option>
+              <select name="status" id="status" className='form-select' onChange={(event) => setStatus(event.target.value)}>
+                <option value={"added"} >Added</option>
+                <option value={"reported"} >Reported</option>
+                <option value={"resolved"} >Resolved</option>
+                <option value={"official_url"} >Our Url</option>
+                <option value={"watchlist"} >Watchlist</option>
 
-            </select>
+              </select>
 
-          </div>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
-            <select name="method1" id="method1" className='form-select' value={report_method_one} onChange={(e) => setMethodOne(e.target.value)}>
-              <option selected value={""}>N/A</option>
-              <option value={'Full Website Process'}>Full Website Process</option>
-              <option value={"Profile Report"}>Profile Report (social sites)</option>
-              <option value={"Registrar/Domain Host Email"}>Registrar/Domain Host Email</option>
-              <option value={"Telegram"}>Telegram</option>
-              <option value={"Via Host Site"}>Via Host Site (blog, apk, ect.)</option>
-              <option value={"Site Specific Form"}>Site Specific Form</option>
-              <option value={"Follow Up Email"}>Follow Up Email</option>
-            </select>
-            {/* <input
+            <div className='mb-3'>
+              <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
+              <select name="method1" id="method1" className='form-select' value={report_method_one} onChange={(e) => setMethodOne(e.target.value)}>
+                <option selected value={""}>N/A</option>
+                <option value={'Full Website Process'}>Full Website Process</option>
+                <option value={"Profile Report"}>Profile Report (social sites)</option>
+                <option value={"Registrar/Domain Host Email"}>Registrar/Domain Host Email</option>
+                <option value={"Telegram"}>Telegram</option>
+                <option value={"Via Host Site"}>Via Host Site (blog, apk, ect.)</option>
+                <option value={"Site Specific Form"}>Site Specific Form</option>
+                <option value={"Follow Up Email"}>Follow Up Email</option>
+              </select>
+              {/* <input
               id="method1"
               value={report_method_one}
               onChange={(event) => setMethodOne(event.target.value)}
               className='form-control'
             // required
             ></input> */}
-          </div>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
-            <select name="method2" id="method2" className='form-select' value={report_method_two} onChange={(e) => setMethodTwo(e.target.value)}>
-              <option selected value={""}>N/A</option>
-              <option value={'Full Website Process'}>Full Website Process</option>
-              <option value={"Profile Report"}>Profile Report (social sites)</option>
-              <option value={"Registrar/Domain Host Email"}>Registrar/Domain Host Email</option>
-              <option value={"Telegram"}>Telegram</option>
-              <option value={"Via Host Site"}>Via Host Site (blog, apk, ect.)</option>
-              <option value={"Site Specific Form"}>Site Specific Form</option>
-              <option value={"Follow Up Email"}>Follow Up Email</option>
-            </select>
-            {/* <input
+            <div className='mb-3'>
+              <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
+              <select name="method2" id="method2" className='form-select' value={report_method_two} onChange={(e) => setMethodTwo(e.target.value)}>
+                <option selected value={""}>N/A</option>
+                <option value={'Full Website Process'}>Full Website Process</option>
+                <option value={"Profile Report"}>Profile Report (social sites)</option>
+                <option value={"Registrar/Domain Host Email"}>Registrar/Domain Host Email</option>
+                <option value={"Telegram"}>Telegram</option>
+                <option value={"Via Host Site"}>Via Host Site (blog, apk, ect.)</option>
+                <option value={"Site Specific Form"}>Site Specific Form</option>
+                <option value={"Follow Up Email"}>Follow Up Email</option>
+              </select>
+              {/* <input
               id="method2"
               value={report_method_two}
               onChange={(event) => setMethodTwo(event.target.value)}
               className='form-control'
             ></input> */}
-          </div>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="form" className='form-label m-1'>Form used</label>
+            <div className='mb-3'>
+              <label htmlFor="form" className='form-label m-1'>Form used</label>
 
-            <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
-              <option value="N/A">N/A</option>
-              {forms.map((form) => (
-                <option key={form.id} value={form.name}>{form.name}</option>
-              ))}
-            </select>
+              <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
+                <option value="N/A">N/A</option>
+                {forms.map((form) => (
+                  <option key={form.id} value={form.name}>{form.name}</option>
+                ))}
+              </select>
 
-          </div>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
-            <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
-              <option value="N/A">N/A</option>
-              {hosts.map((host) => (
-                <option key={host.id} value={host.name}>{host.name}</option>
-              ))}
-            </select>
+            <div className='mb-3'>
+              <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
+              <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
+                <option value="N/A">N/A</option>
+                {hosts.map((host) => (
+                  <option key={host.id} value={host.name}>{host.name}</option>
+                ))}
+              </select>
 
-          </div>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
-            <DatePicker onChange={(d) => setFollowUp(d)} />
-          </div>
+            <div className='mb-3'>
+              <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
+              <DatePicker onChange={(date: Date) => setFollowUp(date)} />
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="count" className='form-label m-1'>Follow up count</label>
-            <input
-              id="count"
-              type="number"
-              value={follow_up_count}
-              onChange={(event) => {
-                const value = parseInt(event.target.value);
-                if (!isNaN(value)) { // Check if the entered value is a valid number
-                  setCount(value);
-                }
-                setCount(parseInt(event.target.value))
-              }}
-              className='form-control'
-            ></input>
-          </div>
+            <div className='mb-3'>
+              <label htmlFor="count" className='form-label m-1'>Follow up count</label>
+              <input
+                id="count"
+                type="number"
+                value={follow_up_count}
+                onChange={(event) => {
+                  const value = parseInt(event.target.value);
+                  if (!isNaN(value)) { // Check if the entered value is a valid number
+                    setCount(value);
+                  }
+                  setCount(parseInt(event.target.value))
+                }}
+                className='form-control'
+              ></input>
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor="comments" className='form-label m-1'>Comments</label>
-            <textarea
-              id="comments"
-              style={{ minHeight: '100px' }}
-              value={comments}
-              onChange={(event) => setComment(event.target.value)}
-              className='form-control'
-            />
-          </div>
+            <div className='mb-3'>
+              <label htmlFor="comments" className='form-label m-1'>Comments</label>
+              <textarea
+                id="comments"
+                style={{ minHeight: '100px' }}
+                value={comments}
+                onChange={(event) => setComment(event.target.value)}
+                className='form-control'
+              />
+            </div>
 
 
-          <div className="d-flex justify-content-center">
-            <button type="submit" className='btn btn-primary m-1'>Save</button>
-            <button onClick={handleCancel} className='btn btn-secondary m-1'>Reset Changes</button>
-          </div>
+            <div className="d-flex justify-content-center">
+              <button type="submit" className='btn btn-primary m-1'>Save</button>
+              <button onClick={handleCancel} className='btn btn-secondary m-1'>Reset Changes</button>
+            </div>
 
-        </form>
+          </form>
 
+        </div>
       </div>
     </>
   )
