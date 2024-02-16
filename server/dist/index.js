@@ -65,7 +65,7 @@ app.get("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
     if (!url || !report_method_one) {
-        return res.status(400).send("Url and Method 1 fields are required");
+        return res.status(400).send("👀 Url and Method 1 fields are required");
     }
     try {
         const ioc = yield prisma.ioc.create({
@@ -74,7 +74,7 @@ app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.json(ioc);
     }
     catch (error) {
-        res.status(500).send("Oops, something went wrong");
+        res.status(500).send(`👀 Oops, something went wrong: ${error}`);
     }
 }));
 app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -95,10 +95,10 @@ app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
     const id = parseInt(req.params.id);
     if (!url || !report_method_one) {
-        return res.status(400).send("Url and Method 1 fields are required");
+        return res.status(400).send("👀 Url and Method 1 fields are required");
     }
     if (!id || isNaN(id)) {
-        return res.status(400).send("ID must be a valid number");
+        return res.status(400).send("👀 ID must be a valid number");
     }
     try {
         const updatedIoc = yield prisma.ioc.update({

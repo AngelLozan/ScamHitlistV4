@@ -1,4 +1,4 @@
-import { debug } from 'console';
+// import { debug } from 'console';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
@@ -48,8 +48,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [url, setUrl] = useState(theIoc ? theIoc.url : "");
   const [removed_date, setRemoved] = useState<Date | null>(null);
   const [status, setStatus] = useState("");
-  const [report_method_one, setMethodOne] = useState(theIoc ? theIoc.report_method_one : "");
-  const [report_method_two, setMethodTwo] = useState(theIoc ? theIoc.report_method_two : "");
+  const [report_method_one, setMethodOne] = useState(theIoc ? theIoc.report_method_one : "N/A");
+  const [report_method_two, setMethodTwo] = useState(theIoc ? theIoc.report_method_two : "N/A");
   const [form, setForm] = useState("");
   const [host, setHost] = useState("");
   const [follow_up_date, setFollowUp] = useState<Date | null>(null);
@@ -66,8 +66,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     console.log("THE IOC: ", theIoc);
     setUrl(theIoc ? theIoc.url : "");
     setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
-    setMethodOne(theIoc ? theIoc.report_method_one : report_method_one);
-    setMethodTwo(theIoc ? theIoc.report_method_two : report_method_two);
+    setMethodOne("N/A");
+    setMethodTwo("N/A");
     setForm(theIoc ? theIoc.form : form);
     setHost(theIoc ? theIoc.host : host);
     setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
@@ -170,7 +170,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     const flashElement = document.createElement("div");
     flashElement.className = `alert alert-info alert-dismissible fade show m-1 position-fixed top-0 end-0`;
     flashElement.role = "alert";
-    flashElement.textContent = `👀 ${message}`;
+    flashElement.textContent = `${message}`;
 
     const button = document.createElement("button");
     button.className = "btn-close";
@@ -256,23 +256,37 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="method1" className='form-label m-1'>Report Method 1</label>
-            <input
-              id="method1"
-              value={report_method_one}
-              onChange={(event) => setMethodOne(event.target.value)}
-              className='form-control'
-            // required
-            ></input>
+            <select name="method1" id="method1" className='form-select' value={report_method_one} onChange={(e) => setMethodOne(e.target.value)}>
+              <option selected value={"N/A"}>N/A</option>
+              <option value={'Full Website Process'}>Full Website Process</option>
+              <option value={"Profile Report (social sites)"}>Profile Report (social sites)</option>
+              <option value={"Registrar/ Domain Host Email"}>Registrar/Domain Host Email</option>
+              <option value={"Telegram"}>Telegram</option>
+              <option value={"Via Host site (blog,apk,ect.)"}>Via Host Site (blog, apk, ect.)</option>
+              <option value={"Site Specific Form"}>Site Specific Form</option>
+              <option value={"Follow Up Email"}>Follow Up Email</option>
+            </select>
+          
           </div>
 
           <div className='mb-3'>
             <label htmlFor="method2" className='form-label m-1'>Report Method 2</label>
-            <input
+            <select name="method2" id="method2" className='form-select' value={report_method_two} onChange={(e) => setMethodTwo(e.target.value)}>
+              <option selected value={"N/A"}>N/A</option>
+              <option value={'Full Website Process'}>Full Website Process</option>
+              <option value={"Profile Report (social sites)"}>Profile Report (social sites)</option>
+              <option value={"Registrar/ Domain Host Email"}>Registrar/Domain Host Email</option>
+              <option value={"Telegram"}>Telegram</option>
+              <option value={"Via Host site (blog,apk,ect.)"}>Via Host Site (blog, apk, ect.)</option>
+              <option value={"Site Specific Form"}>Site Specific Form</option>
+              <option value={"Follow Up Email"}>Follow Up Email</option>
+            </select>
+            {/* <input
               id="method2"
               value={report_method_two}
               onChange={(event) => setMethodTwo(event.target.value)}
               className='form-control'
-            ></input>
+            ></input> */}
           </div>
 
           <div className='mb-3'>

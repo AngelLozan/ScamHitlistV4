@@ -284,6 +284,7 @@ button[type=submit]:hover {
     color: black;
     width: 100%;
     padding: 1.5rem 0;
+    background: beige;
   }
   .navigation-menu li:hover {
     background-color: lightgrey;
