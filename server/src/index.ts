@@ -75,7 +75,7 @@ app.post("/api/iocs", async (req, res) => {
     });
     res.json(ioc);
   } catch (error) {
-    res.status(500).send("👀 Oops, something went wrong");
+    res.status(500).send(`👀 Oops, something went wrong: ${error}`);
   }
 });
 

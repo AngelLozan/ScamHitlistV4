@@ -19,13 +19,13 @@ type Host = {
 
 const Landing = () => {
   const [url, setUrl] = useState("");
-  const [removed_date, setRemoved] = useState();
-  const [status, setStatus] = useState("");
+  const [removed_date, setRemoved] = useState<Date | null>();
+  const [status, setStatus] = useState("added");
   const [report_method_one, setMethodOne] = useState("");
   const [report_method_two, setMethodTwo] = useState("");
   const [form, setForm] = useState("");
   const [host, setHost] = useState("");
-  const [follow_up_date, setFollowUp] = useState<Date>();
+  const [follow_up_date, setFollowUp] = useState<Date | null>();
   const [follow_up_count, setCount] = useState(0);
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
@@ -36,12 +36,26 @@ const Landing = () => {
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
     setUrl("");
-    setRemoved(removed_date);
+    setRemoved(null);
     setMethodOne("N/A");
     setMethodTwo("N/A");
     setForm("");
     setHost("");
-    setFollowUp(follow_up_date);
+    setFollowUp(null);
+    setCount(0)
+    setComment("");
+    setStatus("");
+  };
+
+  const resetForm = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setUrl("");
+    setRemoved(null);
+    setMethodOne("N/A");
+    setMethodTwo("N/A");
+    setForm("");
+    setHost("");
+    setFollowUp(null);
     setCount(0)
     setComment("");
     setStatus("");
@@ -79,7 +93,8 @@ const Landing = () => {
         const errorMsg = await res.text();
         displayFlashMessage(errorMsg);
       } else {
-        displayFlashMessage("Successfully updated the IOC ✅");
+        displayFlashMessage("Successfully added that IOC ✅");
+        resetForm(event);
       }
 
       setUrl(url);
@@ -176,7 +191,7 @@ const Landing = () => {
             <div className='mb-3'>
               <label htmlFor="status" className='form-label m-1'>Status</label>
 
-              <select name="status" id="status" className='form-select' onChange={(event) => setStatus(event.target.value)}>
+              <select name="status" value={status} id="status" className='form-select' onChange={(event) => setStatus(event.target.value)}>
                 <option value={"added"} >Added</option>
                 <option value={"reported"} >Reported</option>
                 <option value={"resolved"} >Resolved</option>
@@ -253,7 +268,7 @@ const Landing = () => {
 
             <div className='mb-3'>
               <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
-              <DatePicker onChange={(date: Date) => setFollowUp(date)} />
+              <DatePicker selected={follow_up_date} onChange={(date: Date) => setFollowUp(date)} />
             </div>
 
             <div className='mb-3'>
