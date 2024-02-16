@@ -78,8 +78,12 @@ ALTER COLUMN <column name> DROP NOT NULL;
 
 
 To do:
-- Configure server endpoints: Update & Create
-- Create Edit endpoint
 - Fix front end data model and table display
 - Fix seed command.
 - Add form and host from db to select drop down in update & create forms
+- Create create pages for form and host in settings.
+- Create create endpoint for form and host backend
+- Add additional API call functions to show page
+- Style show page
+- Option/low priority (style app)
+
