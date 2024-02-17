@@ -68,6 +68,15 @@ ALTER TABLE "<name>"
 ALTER COLUMN <column name> DROP NOT NULL;
 ```
 
+- Finally, set the highest ID in the tables manually so that you can create records, since you are populating ids with the csv data. (note the double quotes around table naming schemes that I had to use in this series of steps.) `COALESCE` is not required here but good practice.
+
+```
+SELECT setval('"Ioc_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Ioc"), 1), false);
+SELECT setval('"Host_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Host"), 1), false);
+SELECT setval('"Form_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Form"), 1), false);
+
+```
+
 ## Seed db with prisma:
 - `npx prisma db push` (generate your Prisma client and create the database tables.)
 - Verify creation of tables with `\dt`
@@ -86,4 +95,3 @@ To do:
 - Add additional API call functions to show page
 - Style show page
 - Option/low priority (style app)
-
