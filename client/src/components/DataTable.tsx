@@ -53,11 +53,6 @@ const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery })
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [reset, setReset] = useState(false);
 
-  // const handleReset = () => {
-  //   fetchIocs();
-  //   setReset(false);
-  // }
-
   const onRowClick = (event: number, rows: Row[]) => {
     // console.log(rows[0].id);
     console.log("EVENT: ", event);

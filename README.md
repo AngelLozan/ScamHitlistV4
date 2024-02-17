@@ -87,11 +87,12 @@ SELECT setval('"Form_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Form"), 1), fals
 
 
 To do:
-- Fix front end data model and table display
 - Fix seed command.
-- Add form and host from db to select drop down in update & create forms
 - Create create pages for form and host in settings.
 - Create create endpoint for form and host backend
 - Add additional API call functions to show page
 - Style show page
 - Option/low priority (style app)
+- Finish enpoints for other status iocs/urls
+- integrate image attachment S3 bucket and add field for ioc to hold Image.
+- Add image input to form fields.

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
+import Flash from "./Flash";
 
 // enum Status {
 //   added = 0,
@@ -68,8 +69,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
     setMethodOne("N/A");
     setMethodTwo("N/A");
-    setForm(theIoc ? theIoc.form : form);
-    setHost(theIoc ? theIoc.host : host);
+    setForm(theIoc && theIoc.form !== null ? theIoc.form : "");
+    setHost(theIoc && theIoc.host !== null ? theIoc.host : "");
     setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
     setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
     setComment(theIoc ? theIoc.comments : comments);
@@ -118,9 +119,9 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
       if (!res.ok) {
         const errorMsg = await res.text();
-        displayFlashMessage(errorMsg);
+        Flash(errorMsg, "danger");
       } else {
-        displayFlashMessage("Successfully updated the IOC ✅");
+        Flash("Successfully updated the IOC ✅", "success");
       }
 
       setUrl(url);
@@ -164,28 +165,6 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const displayFlashMessage = (message: string) => {
-    const flashElement = document.createElement("div");
-    flashElement.className = `alert alert-info alert-dismissible fade show m-1 position-fixed top-0 end-0`;
-    flashElement.role = "alert";
-    flashElement.textContent = `${message}`;
-
-    const button = document.createElement("button");
-    button.className = "btn-close";
-    button.setAttribute("data-bs-dismiss", "alert");
-
-    button.addEventListener("click", () => {
-      flashElement.remove();
-    });
-
-    flashElement.appendChild(button);
-    document.body.appendChild(flashElement);
-
-    setTimeout(() => {
-      flashElement.remove();
-    }, 5000);
   }
 
 
@@ -266,7 +245,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
               <option value={"Site Specific Form"}>Site Specific Form</option>
               <option value={"Follow Up Email"}>Follow Up Email</option>
             </select>
-          
+
           </div>
 
           <div className='mb-3'>
@@ -292,7 +271,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
           <div className='mb-3'>
             <label htmlFor="form" className='form-label m-1'>Form used</label>
 
-            <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
+            <select name="forms" id="forms" value={form} className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
               <option value="N/A">N/A</option>
               {forms.map((form) => (
                 <option key={form.id} selected={theIoc && theIoc.form === form.name ? true : false} value={form.name}>{form.name}</option>
@@ -303,7 +282,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
           <div className='mb-3'>
             <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
-            <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
+            <select name="hosts" id="hosts" value={host} className='form-select' onChange={(event) => setHost(event.target.value)}>
               <option value="N/A">N/A</option>
               {hosts.map((host) => (
                 <option key={host.id} selected={theIoc && theIoc.host === host.name ? true : false} value={host.name}>{host.name}</option>
