@@ -17,7 +17,7 @@ app.use(cors());
 // @dev Search functionality
 // @dev add to end of path /?q=query
 app.get("/api/iocs/search", async (req, res) => {
-  const { q , path } = req.query; //@dev ?q=hello
+  const { q , path } = req.query; //@dev ?q=hello path=/reported
 
   console.log(q);
   console.log(path);

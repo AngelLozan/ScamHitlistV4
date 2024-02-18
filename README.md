@@ -94,4 +94,4 @@ To do:
 - Style show page
 - Option/low priority (style app)
 - integrate image attachment S3 bucket and add field for ioc to hold Image.
-- Add image input to form fields.
+- Add image input to form fields
