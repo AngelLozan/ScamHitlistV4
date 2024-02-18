@@ -1,5 +1,6 @@
 import DataTable, { Row } from "./DataTable";
 import { useEffect, useState } from "react"
+// import Flash from "./Flash";
 
 const All = () => {
   const [rows, setIocs] = useState<Row[]>([]);

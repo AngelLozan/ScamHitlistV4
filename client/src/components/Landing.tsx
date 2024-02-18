@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
+import Flash from "./Flash";
+import SearchBar from './SearchBar';
 
 
 type Form = {
@@ -53,8 +55,8 @@ const Landing = () => {
     setRemoved(null);
     setMethodOne("N/A");
     setMethodTwo("N/A");
-    setForm("");
-    setHost("");
+    setForm("N/A");
+    setHost("N/A");
     setFollowUp(null);
     setCount(0)
     setComment("");
@@ -91,48 +93,26 @@ const Landing = () => {
 
       if (!res.ok) {
         const errorMsg = await res.text();
-        displayFlashMessage(errorMsg);
+        Flash(errorMsg, "danger");
       } else {
-        displayFlashMessage("Successfully added that IOC ✅");
+        Flash("Successfully added the IOC ✅", "success");
         resetForm(event);
       }
 
-      setUrl(url);
-      setRemoved(removed_date);
-      setStatus(status);
-      setMethodOne(report_method_one);
-      setMethodTwo(report_method_two);
-      setForm(form);
-      setHost(host);
-      setFollowUp(follow_up_date);
-      setCount(follow_up_count)
-      setComment(comments);
+      setUrl("");
+      setRemoved(null);
+      setStatus("");
+      setMethodOne("N/A");
+      setMethodTwo("N/A");
+      setForm("N/A");
+      setHost("N/A");
+      setFollowUp(null);
+      setCount(0)
+      setComment("");
     } catch (error) {
       console.log(error);
     }
   };
-
-  const displayFlashMessage = (message: string) => {
-    const flashElement = document.createElement("div");
-    flashElement.className = `alert alert-info alert-dismissible fade show m-1 position-fixed top-0 end-0`;
-    flashElement.role = "alert";
-    flashElement.textContent = `${message}`;
-
-    const button = document.createElement("button");
-    button.className = "btn-close";
-    button.setAttribute("data-bs-dismiss", "alert");
-
-    button.addEventListener("click", () => {
-      flashElement.remove();
-    });
-
-    flashElement.appendChild(button);
-    document.body.appendChild(flashElement);
-
-    setTimeout(() => {
-      flashElement.remove();
-    }, 5000);
-  }
 
 
   const fetchForms = async () => {
@@ -163,6 +143,12 @@ const Landing = () => {
   return (
     <>
       <div className='p-5 m-3'>
+        <div className="my-3 text-center">
+          <div className='my-1'>
+            <h5>Check to see if the Ioc exists in the database 👇</h5>
+          </div>
+          <SearchBar />
+        </div>
         <div className='text-center m-3'>
           <h1>Add an Ioc</h1>
         </div>
@@ -246,7 +232,7 @@ const Landing = () => {
             <div className='mb-3'>
               <label htmlFor="form" className='form-label m-1'>Form used</label>
 
-              <select name="forms" id="forms" className='form-select' defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
+              <select name="forms" id="forms" className='form-select' value={form} defaultValue="N/A" onChange={(event) => setForm(event.target.value)}>
                 <option value="N/A">N/A</option>
                 {forms.map((form) => (
                   <option key={form.id} value={form.name}>{form.name}</option>
@@ -257,7 +243,7 @@ const Landing = () => {
 
             <div className='mb-3'>
               <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
-              <select name="hosts" id="hosts" className='form-select' onChange={(event) => setHost(event.target.value)}>
+              <select name="hosts" id="hosts" value={host} className='form-select' onChange={(event) => setHost(event.target.value)}>
                 <option value="N/A">N/A</option>
                 {hosts.map((host) => (
                   <option key={host.id} value={host.name}>{host.name}</option>

@@ -1,38 +1,25 @@
 import React, { useState } from 'react';
-import { Row } from "./DataTable";
+import Flash from "./Flash";
 
 const SearchBar = () => {
-  const [rows, setIocs] = useState<Row[]>([]);
   const [reset, setReset] = useState(false);
   const [q, setQuery] = useState('');
 
-  const handleReset = () => {
-    fetchIocs();
-    setReset(false);
-  }
-
-
-  const fetchIocs = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/iocs");
-      const rows = await response.json();
-      setIocs(rows);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const searchIocs = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!q) {
-      fetchIocs();
+    if (!q && reset) {
+      Flash("Please enter a search query ser", "info")
       return;
     }
 
     try {
       const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}`);
-      const rows: Row[] = await response.json();
-      setIocs(rows);
+      const found = await response.json();
+      if (found.length > 0) {
+        Flash("Looks like this already exists in the database. Search on the All page.", "warning")
+      } else {
+        Flash("Ioc not found/created. Create one below 👇", "success");
+      }
       setQuery('');
       setReset(true);
     } catch (error) {
@@ -43,13 +30,27 @@ const SearchBar = () => {
   return (
     <>
       <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
+        {reset ?
+          <input type="text" name="q" placeholder="Reset the search 👉" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+          : <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+        }
+
+        {reset ?
+          <input type="submit" value="Reset" className="btn btn-primary my-2" onClick={() => setReset(false)} />
+          : <input type="submit" value="Search" className="btn btn-primary my-2" onClick={() => setReset(true)} />
+        }
+
+      </form>
+
+      {/* <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
         <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
         {reset ? (
           <input type="button" value="Reset" className="btn btn-primary my-2" onClick={handleReset} />
         ) : (
           <input type="submit" value="Search" className="btn btn-primary my-2" />
         )}
-      </form>
+      </form> */}
+
     </>
   )
 }

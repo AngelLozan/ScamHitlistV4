@@ -1,47 +1,47 @@
 import React from 'react';
 import "./App.css";
-import { useEffect, useState } from 'react'; // useState
+// import { useEffect, useState } from 'react'; // useState
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // Navigate
 import { All, ToBeReported, ReportedUrls, WatchList, FollowUp, Landing, Navbar, Settings } from "./components";
 
 
-type Note = {
-  id: number;
-  title: string;
-  content: string;
-};
+// type Note = {
+//   id: number;
+//   title: string;
+//   content: string;
+// };
 
 
 const App = () => {
 
-  const handleAddNote = async (event: React.FormEvent) : Promise<any> => {
-    event.preventDefault();
-    // const newNote: Note = {
-    //   id: notes.length + 1,
-    //   title: title,
-    //   content: content,
-    // };
+  // const handleAddNote = async (event: React.FormEvent) : Promise<any> => {
+  //   event.preventDefault();
+  //   // const newNote: Note = {
+  //   //   id: notes.length + 1,
+  //   //   title: title,
+  //   //   content: content,
+  //   // };
 
-    try {
-      const res = await fetch("http://localhost:5000/api/notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // title,
-          // content,
-        }),
-      })
-      const newNote: Note = await res.json();
-      // setNotes([newNote, ...notes]);
-      // setTitle('');
-      // setContent('');
-    } catch (error) {
-      console.log(error);
-    }
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/notes", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         // title,
+  //         // content,
+  //       }),
+  //     })
+  //     const newNote: Note = await res.json();
+  //     // setNotes([newNote, ...notes]);
+  //     // setTitle('');
+  //     // setContent('');
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
-  };
+  // };
 
 
   // const handleNoteClick = (note: Note) => {
@@ -215,11 +215,11 @@ const App = () => {
           element={<All />}
         />
         <Route
-          path="/tobereported"
+          path="/2b_reported"
           element={<ToBeReported />}
         />
         <Route
-          path="/reportedurls"
+          path="/reported"
           element={<ReportedUrls />}
         />
         <Route
@@ -227,7 +227,7 @@ const App = () => {
           element={<WatchList />}
         />
         <Route
-          path="/followup"
+          path="/follow_up"
           element={<FollowUp />}
         />
         <Route

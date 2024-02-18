@@ -20,7 +20,7 @@ const columns: GridColDef[] = [
 
 interface DataTableProps {
   rows: Row[];
-  searchIocs: (event: React.FormEvent) => void;
+  searchIocs?: (event: React.FormEvent) => void;
   q: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -49,14 +49,9 @@ export type Row = {
   comments: string;
 };
 
-const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery }) => {
+const DataTable: React.FC<DataTableProps> = ({ rows, searchIocs, q, setQuery }) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [reset, setReset] = useState(false);
-
-  // const handleReset = () => {
-  //   fetchIocs();
-  //   setReset(false);
-  // }
 
   const onRowClick = (event: number, rows: Row[]) => {
     // console.log(rows[0].id);
@@ -66,7 +61,7 @@ const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery })
     // const id = rows[index].id;
     const ioc = rows.find(row => row.id === event);
     console.log("IOC: ", ioc);
-    const id = ioc? ioc.id : event;
+    const id = ioc ? ioc.id : event;
     setSelectedId(id);
     return id;
   }
@@ -77,19 +72,23 @@ const DataTable: React.FC<DataTableProps> = ({  rows, searchIocs, q, setQuery })
         typeof selectedId === 'number' ?
           <ShowIoc id={selectedId} /> :
           <>
-            <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
-            { reset?
-              <input type="text" name="q" placeholder="Reset the search 👉" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
-              : <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
-          }
+            {searchIocs ?
+              <form className="d-flex" onSubmit={(event) => searchIocs(event)}>
+                {reset ?
+                  <input type="text" name="q" placeholder="Reset the search 👉" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+                  : <input type="text" name="q" placeholder="Search by url" className="form-control" value={q} onChange={e => setQuery(e.target.value)} />
+                }
 
-          { reset?
-              <input type="submit" value="Reset" className="btn btn-primary my-2" onClick={() => setReset(false)}/>
-              : <input type="submit" value="Search" className="btn btn-primary my-2" onClick={() => setReset(true)}/>
-          }
+                {reset ?
+                  <input type="submit" value="Reset" className="btn btn-primary my-2" onClick={() => setReset(false)} />
+                  : <input type="submit" value="Search" className="btn btn-primary my-2" onClick={() => setReset(true)} />
+                }
+              </form>
+              :
+              null
+            }
 
 
-            </form>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
                 rows={rows}

@@ -39,13 +39,13 @@ export default function Navbar() {
             <a href="/all">All Iocs</a>
           </li>
           <li>
-            <a href="/reportedurls">Reported Urls</a>
+            <a href="/reported">Reported Urls</a>
           </li>
           <li>
-            <a href="/tobereported">2B Reported</a>
+            <a href="/2b_reported">2B Reported</a>
           </li>
           <li>
-            <a href="/followup">Follow Up</a>
+            <a href="/follow_up">Follow Up</a>
           </li>
           <li>
             <a href="/watchlist">Watchlist</a>

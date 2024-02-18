@@ -20,9 +20,35 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { q } = req.query;
+    const { q, path } = req.query;
     if (!q) {
         return res.status(400).send("Query parameter required");
+    }
+    if (path) {
+        console.log("From: ", path);
+        try {
+            const iocs = yield prisma.ioc.findMany({
+                where: {
+                    status: 'reported',
+                    OR: [
+                        {
+                            url: {
+                                contains: q.toString(),
+                            },
+                        },
+                        {
+                            comments: {
+                                contains: q.toString(),
+                            },
+                        },
+                    ],
+                },
+            });
+            return res.json(iocs);
+        }
+        catch (error) {
+            console.log("Error in reported search: ", error);
+        }
     }
     try {
         const iocs = yield prisma.ioc.findMany({
@@ -54,6 +80,64 @@ app.get("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const iocs = yield prisma.ioc.findMany();
     res.json(iocs);
 }));
+app.get("/api/iocs/reported", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const iocs = yield prisma.ioc.findMany({
+        where: {
+            status: {
+                equals: "reported",
+            },
+        },
+    });
+    res.json(iocs);
+}));
+app.get("/api/iocs/follow_up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentDate = new Date();
+    const iocs = yield prisma.ioc.findMany({
+        where: {
+            follow_up_date: {
+                lte: new Date(currentDate.setUTCDate(currentDate.getUTCDate() - 13)),
+            },
+            NOT: {
+                OR: [
+                    { status: { equals: "resolved" } },
+                    { status: { equals: "official_url" } },
+                    { status: { equals: "added" } },
+                ],
+            },
+        },
+    });
+    res.json(iocs);
+}));
+app.get("/api/iocs/watchlist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const iocs = yield prisma.ioc.findMany({
+        where: {
+            status: {
+                equals: "watchlist",
+            },
+        },
+    });
+    res.json(iocs);
+}));
+app.get("/api/iocs/official_urls", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const iocs = yield prisma.ioc.findMany({
+        where: {
+            status: {
+                equals: "official_url",
+            },
+        },
+    });
+    res.json(iocs);
+}));
+app.get("/api/iocs/2b_reported", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const iocs = yield prisma.ioc.findMany({
+        where: {
+            status: {
+                equals: "added",
+            },
+        },
+    });
+    res.json(iocs);
+}));
 app.get("/api/forms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const forms = yield prisma.form.findMany();
     res.json(forms);
@@ -63,13 +147,24 @@ app.get("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     res.json(hosts);
 }));
 app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
+    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, } = req.body;
     if (!url || !report_method_one) {
         return res.status(400).send("👀 Url and Method 1 fields are required");
     }
     try {
         const ioc = yield prisma.ioc.create({
-            data: { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments },
+            data: {
+                url,
+                removed_date,
+                status,
+                report_method_one,
+                report_method_two,
+                form,
+                host,
+                follow_up_date,
+                follow_up_count,
+                comments,
+            },
         });
         res.json(ioc);
     }
@@ -83,7 +178,7 @@ app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
         const ioc = yield prisma.ioc.findUnique({
             where: {
                 id: ioc_id,
-            }
+            },
         });
         res.json(ioc);
     }
@@ -92,7 +187,7 @@ app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments } = req.body;
+    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, } = req.body;
     const id = parseInt(req.params.id);
     if (!url || !report_method_one) {
         return res.status(400).send("👀 Url and Method 1 fields are required");
@@ -103,7 +198,18 @@ app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const updatedIoc = yield prisma.ioc.update({
             where: { id },
-            data: { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments },
+            data: {
+                url,
+                removed_date,
+                status,
+                report_method_one,
+                report_method_two,
+                form,
+                host,
+                follow_up_date,
+                follow_up_count,
+                comments,
+            },
         });
         res.json(updatedIoc);
     }
