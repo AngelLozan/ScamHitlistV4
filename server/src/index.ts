@@ -77,7 +77,14 @@ app.get("/api/iocs/follow_up", async (req, res) => {
   const iocs = await prisma.ioc.findMany({
     where: {
       follow_up_date: {
-        lte: new Date(currentDate.setUTCDate(currentDate.getUTCDate() - 13)) ,
+        lte: new Date(currentDate.setUTCDate(currentDate.getUTCDate() - 13)),
+      },
+      NOT: {
+        OR: [
+          { status: { equals: "resolved" } },
+          { status: { equals: "official_url" } },
+          { status: { equals: "added" } },
+        ],
       },
     },
   });
@@ -102,6 +109,18 @@ app.get("/api/iocs/official_urls", async (req, res) => {
     where: {
       status: {
         equals: "official_url",
+      },
+    },
+  });
+  res.json(iocs);
+});
+
+// @dev 2B Reported
+app.get("/api/iocs/2b_reported", async (req, res) => {
+  const iocs = await prisma.ioc.findMany({
+    where: {
+      status: {
+        equals: "added",
       },
     },
   });
