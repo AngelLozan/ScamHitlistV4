@@ -89,10 +89,9 @@ SELECT setval('"Form_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Form"), 1), fals
 To do:
 - Fix seed command.
 - Create create pages for form and host in settings.
-- Create create endpoint for form and host backend
+- Create 'create' endpoint for form and host backend
 - Add additional API call functions to show page
 - Style show page
 - Option/low priority (style app)
-- Finish enpoints for other status iocs/urls
 - integrate image attachment S3 bucket and add field for ioc to hold Image.
 - Add image input to form fields.

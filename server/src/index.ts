@@ -72,11 +72,12 @@ app.get("/api/iocs/reported", async (req, res) => {
 
 // @dev Follow up iocs
 app.get("/api/iocs/follow_up", async (req, res) => {
-
+  //@dev Where follow up date is lte (less than or equal to) the date two weeks ago
+  const currentDate = new Date();
   const iocs = await prisma.ioc.findMany({
     where: {
       follow_up_date: {
-        gte: new Date() ,
+        lte: new Date(currentDate.setUTCDate(currentDate.getUTCDate() - 13)) ,
       },
     },
   });
@@ -84,8 +85,28 @@ app.get("/api/iocs/follow_up", async (req, res) => {
 });
 
 // @dev Watchlist iocs
+app.get("/api/iocs/watchlist", async (req, res) => {
+  const iocs = await prisma.ioc.findMany({
+    where: {
+      status: {
+        equals: "watchlist",
+      },
+    },
+  });
+  res.json(iocs);
+});
 
 // @dev Official urls
+app.get("/api/iocs/official_urls", async (req, res) => {
+  const iocs = await prisma.ioc.findMany({
+    where: {
+      status: {
+        equals: "official_url",
+      },
+    },
+  });
+  res.json(iocs);
+});
 
 app.get("/api/forms", async (req, res) => {
   const forms = await prisma.form.findMany();
