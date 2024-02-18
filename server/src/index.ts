@@ -17,10 +17,40 @@ app.use(cors());
 // @dev Search functionality
 // @dev add to end of path /?q=query
 app.get("/api/iocs/search", async (req, res) => {
-  const { q } = req.query; //@dev ?q=hello
+  const { q , path } = req.query; //@dev ?q=hello
+
+  console.log(q);
+  console.log(path);
 
   if (!q) {
     return res.status(400).send("Query parameter required");
+  }
+
+  if (path) {
+    console.log("From: ", path);
+    try {
+      const iocs = await prisma.ioc.findMany({
+        where: {
+          status: 'reported',
+          OR: [
+            {
+              url: {
+                contains: q.toString(),
+              },
+            },
+            {
+              comments: {
+                contains: q.toString(),
+              },
+            },
+          ],
+        },
+      });
+
+      return res.json(iocs);
+    } catch (error) {
+      console.log("Error in reported search: ", error );
+    }
   }
 
   try {

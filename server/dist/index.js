@@ -20,9 +20,35 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { q } = req.query;
+    const { q, path } = req.query;
     if (!q) {
         return res.status(400).send("Query parameter required");
+    }
+    if (path) {
+        console.log("From: ", path);
+        try {
+            const iocs = yield prisma.ioc.findMany({
+                where: {
+                    status: 'reported',
+                    OR: [
+                        {
+                            url: {
+                                contains: q.toString(),
+                            },
+                        },
+                        {
+                            comments: {
+                                contains: q.toString(),
+                            },
+                        },
+                    ],
+                },
+            });
+            return res.json(iocs);
+        }
+        catch (error) {
+            console.log("Error in reported search: ", error);
+        }
     }
     try {
         const iocs = yield prisma.ioc.findMany({

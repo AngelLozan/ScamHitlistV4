@@ -25,7 +25,7 @@ const ReportedUrls = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}`);
+      const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}&path=${window.location.pathname}`);
       const rows: Row[] = await response.json();
       setIocs(rows);
       setQuery('');
