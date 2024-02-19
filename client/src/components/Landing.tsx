@@ -241,6 +241,10 @@ const Landing = () => {
               </select>
 
             </div>
+            <div className='mb-3'>
+              <BoostrapModal name={"form"} fetchForms={fetchForms} fetchHosts={fetchHosts}/>
+            </div>
+
 
             <div className='mb-3'>
               <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
@@ -252,7 +256,9 @@ const Landing = () => {
               </select>
 
             </div>
-            <BoostrapModal />
+            <div className='mb-3'>
+              <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts}/>
+            </div>
 
             <div className='mb-3'>
               <label htmlFor="DatePicker" className='m-1'>Follow up date</label>

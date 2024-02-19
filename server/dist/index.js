@@ -21,6 +21,8 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { q, path } = req.query;
+    console.log(q);
+    console.log(path);
     if (!q) {
         return res.status(400).send("Query parameter required");
     }
@@ -170,6 +172,91 @@ app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (error) {
         res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+    }
+}));
+app.post("/api/forms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { url, name, } = req.body;
+    if (!name) {
+        return res.status(400).send("👀 Name field is required");
+    }
+    const existingForm = yield prisma.form.findFirst({
+        where: {
+            OR: [
+                {
+                    url: {
+                        contains: url,
+                    },
+                },
+                {
+                    name: {
+                        contains: name,
+                    },
+                },
+            ],
+        },
+    });
+    if (existingForm !== null) {
+        return res.status(400).send("👀 That form may be on the list, check again.");
+    }
+    try {
+        const form = yield prisma.form.create({
+            data: {
+                url,
+                name,
+            },
+        });
+        res.json(form);
+    }
+    catch (error) {
+        res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+    }
+}));
+app.delete("/api/forms/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    if (!id || isNaN(id)) {
+        return res.status(400).send("ID field required");
+    }
+    try {
+        yield prisma.form.delete({
+            where: { id },
+        });
+        res.status(204).send();
+    }
+    catch (error) {
+        res.status(500).send("Oops, something went wrong");
+    }
+}));
+app.post("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, name, } = req.body;
+    if (!name) {
+        return res.status(400).send("👀 Name field is required");
+    }
+    try {
+        const host = yield prisma.host.create({
+            data: {
+                email,
+                name,
+            },
+        });
+        res.json(host);
+    }
+    catch (error) {
+        res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+    }
+}));
+app.delete("/api/hosts/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    if (!id || isNaN(id)) {
+        return res.status(400).send("ID field required");
+    }
+    try {
+        yield prisma.host.delete({
+            where: { id },
+        });
+        res.status(204).send();
+    }
+    catch (error) {
+        res.status(500).send("Oops, something went wrong");
     }
 }));
 app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

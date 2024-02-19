@@ -20,7 +20,7 @@ input[name=url] {
   cursor: copy;
 }
 
-button[type=submit] {
+/* button[type=submit] {
   width: 50%;
   background-color: #4CAF50;
   color: white;
@@ -35,7 +35,7 @@ button[type=submit] {
 
 button[type=submit]:hover {
   background-color: #45a049;
-}
+} */
 
 .button4 {
   background-color: white;
@@ -63,6 +63,7 @@ button[type=submit]:hover {
 
 .navigation {
   padding: 0.5rem 1rem;
+  z-index: 1;
   height: 60px;
   width: 100%;
   display: flex;
@@ -200,7 +201,7 @@ button[type=submit]:hover {
     color: black;
     width: 100%;
     padding: 1.5rem 0;
-    background: beige;
+    background: white;
   }
 
   .navigation-menu li:hover {

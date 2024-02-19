@@ -211,6 +211,27 @@ app.post("/api/forms", async (req, res) => {
     return res.status(400).send("👀 Name field is required");
   }
 
+  const existingForm = await prisma.form.findFirst({
+    where: {
+      OR: [
+        {
+          url: {
+            contains: url,
+          },
+        },
+        {
+          name: {
+            contains: name,
+          },
+        },
+      ],
+    },
+  });
+
+  if(existingForm !== null){
+    return res.status(400).send("👀 That form may be on the list, check again.");
+  }
+
   try {
     const form = await prisma.form.create({
       data: {
@@ -221,6 +242,24 @@ app.post("/api/forms", async (req, res) => {
     res.json(form);
   } catch (error) {
     res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Delete form
+app.delete("/api/forms/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  if (!id || isNaN(id)) {
+    return res.status(400).send("ID field required");
+  }
+
+  try {
+    await prisma.form.delete({
+      where: { id },
+    });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send("Oops, something went wrong");
   }
 });
 
@@ -245,6 +284,24 @@ app.post("/api/hosts", async (req, res) => {
     res.json(host);
   } catch (error) {
     res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Delete host
+app.delete("/api/hosts/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  if (!id || isNaN(id)) {
+    return res.status(400).send("ID field required");
+  }
+
+  try {
+    await prisma.host.delete({
+      where: { id },
+    });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send("Oops, something went wrong");
   }
 });
 

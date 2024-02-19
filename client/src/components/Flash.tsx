@@ -1,5 +1,6 @@
 const Flash = (message: string, type: string) => {
   const flashElement = document.createElement("div");
+  flashElement.style.zIndex = "2"; 
   flashElement.className = `alert alert-${type} alert-dismissible fade show m-3 position-fixed top-0 end-0`;
   flashElement.role = "alert";
   flashElement.textContent = `${message}`;
