@@ -10,3 +10,5 @@ export { default as ShowIoc } from "./ShowIoc";
 export { default as EditIoc } from "./EditIoc";
 export { default as SearchBar } from "./SearchBar";
 export { default as Flash } from "./Flash";
+export { default as Modal } from "./Modal";
+export { default as BoostrapModal } from "./BoostrapModal";

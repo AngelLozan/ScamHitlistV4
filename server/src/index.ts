@@ -7,13 +7,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// function isDateOlderThanTwoWeeks(dateToCheck: Date) {
-//   const currentDate = new Date();
-//   const twoWeeksAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
-//   const date = new Date(dateToCheck);
-//   return date < twoWeeksAgo;
-// }
-
 // @dev Search functionality
 // @dev add to end of path /?q=query
 app.get("/api/iocs/search", async (req, res) => {
@@ -167,7 +160,7 @@ app.get("/api/hosts", async (req, res) => {
   res.json(hosts);
 });
 
-// @dev Create
+// @dev Create ioc
 app.post("/api/iocs", async (req, res) => {
   const {
     url,
@@ -202,6 +195,54 @@ app.post("/api/iocs", async (req, res) => {
       },
     });
     res.json(ioc);
+  } catch (error) {
+    res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Create form
+app.post("/api/forms", async (req, res) => {
+  const {
+    url,
+    name,
+  } = req.body;
+
+  if (!name) {
+    return res.status(400).send("👀 Name field is required");
+  }
+
+  try {
+    const form = await prisma.form.create({
+      data: {
+        url,
+        name,
+      },
+    });
+    res.json(form);
+  } catch (error) {
+    res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Create host
+app.post("/api/hosts", async (req, res) => {
+  const {
+    email,
+    name,
+  } = req.body;
+
+  if (!name) {
+    return res.status(400).send("👀 Name field is required");
+  }
+
+  try {
+    const host = await prisma.host.create({
+      data: {
+        email,
+        name,
+      },
+    });
+    res.json(host);
   } catch (error) {
     res.status(500).send(`👀 Oops, something went wrong: ${error}`);
   }

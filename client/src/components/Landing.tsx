@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import Flash from "./Flash";
 import SearchBar from './SearchBar';
+import BoostrapModal from './BoostrapModal';
 
 
 type Form = {
@@ -251,6 +252,7 @@ const Landing = () => {
               </select>
 
             </div>
+            <BoostrapModal />
 
             <div className='mb-3'>
               <label htmlFor="DatePicker" className='m-1'>Follow up date</label>
