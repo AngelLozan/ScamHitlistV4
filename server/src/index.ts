@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
+import { PutObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+const client = new S3Client({region: process.env.AWS_REGION});
+import fs from 'fs';
+const formidable = require('formidable');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -173,6 +177,7 @@ app.post("/api/iocs", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
+    image_url
   } = req.body;
 
   if (!url || !report_method_one) {
@@ -192,6 +197,7 @@ app.post("/api/iocs", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
+        image_url
       },
     });
     res.json(ioc);
@@ -314,6 +320,10 @@ app.get("/api/iocs/:id", async (req, res) => {
         id: ioc_id,
       },
     });
+    if (!ioc ) {
+      res.status(400).send("That does not exist");
+    }
+
     res.json(ioc);
   } catch (error) {
     res.status(500).send("Oops, something went wrong");
@@ -380,6 +390,41 @@ app.delete("/api/iocs/:id", async (req, res) => {
   } catch (error) {
     res.status(500).send("Oops, something went wrong");
   }
+});
+
+app.post("/api/upload_file", async (req, res) => {
+  const form = new formidable.IncomingForm();
+
+  form.parse(req, async (err: Error, fields: { key: string; }, files: { file: any; }) => {
+    if (err) {
+      return res.status(500).send("Failed to parse form data.");
+    }
+
+    const { key } = fields; // Assuming the file key as part of the request body
+    const uploadedFile = files.file;
+    const encodedFileName = encodeURIComponent(key);
+
+    if (!uploadedFile) {
+      return res.status(400).send('No file uploaded.');
+    }
+
+    const input = {
+      Bucket: process.env.BUCKET,
+      Key: key,
+      Body: fs.readFileSync(uploadedFile.path), // Access the file content from the uploaded file's path
+    };
+
+    const command = new PutObjectCommand(input);
+
+    try {
+      const response = await client.send(command);
+      console.log(response);
+      res.status(201).send(`https://${process.env.BUCKET}.s3.amazonaws.com/${encodedFileName}`);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Something failed in file upload, please try again.")
+    }
+  });
 });
 
 app.listen(5000, () => {

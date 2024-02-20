@@ -1,4 +1,4 @@
-// import { debug } from 'console';
+
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
@@ -33,8 +33,42 @@ const Landing = () => {
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [image_url, setImageUrl] = useState("");
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+      await handleUpload();
+    }
+  };
 
+  const handleUpload = async () => {
+    if (file) {
+      console.log("Uploading file...");
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("key", file.name);
+
+      try {
+        const result = await fetch("http://localhost:5000/api/upload_file", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (result.status !== 201) {
+          Flash("Something went wrong uploading the file. Please try again", "warning");
+        } else {
+          const url = await result.text();
+          Flash("Successful file upload ✅", "success");
+          setImageUrl(url);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -48,6 +82,7 @@ const Landing = () => {
     setCount(0)
     setComment("");
     setStatus("");
+    setImageUrl("");
   };
 
   const resetForm = async (event: React.FormEvent) => {
@@ -62,6 +97,7 @@ const Landing = () => {
     setCount(0)
     setComment("");
     setStatus("");
+    setImageUrl("");
   };
 
 
@@ -78,7 +114,8 @@ const Landing = () => {
       host,
       follow_up_date,
       follow_up_count,
-      comments
+      comments,
+      image_url
     });
 
     console.log("Body json: ", bodyJson);
@@ -110,6 +147,7 @@ const Landing = () => {
       setFollowUp(null);
       setCount(0)
       setComment("");
+      setImageUrl("");
     } catch (error) {
       console.log(error);
     }
@@ -242,7 +280,7 @@ const Landing = () => {
 
             </div>
             <div className='mb-3'>
-              <BoostrapModal name={"form"} fetchForms={fetchForms} fetchHosts={fetchHosts}/>
+              <BoostrapModal name={"form"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
             </div>
 
 
@@ -257,7 +295,7 @@ const Landing = () => {
 
             </div>
             <div className='mb-3'>
-              <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts}/>
+              <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
             </div>
 
             <div className='mb-3'>
@@ -293,6 +331,7 @@ const Landing = () => {
               />
             </div>
 
+            <input type="hidden" name="image_url" value={image_url} />
 
             <div className="d-flex justify-content-center">
               <button type="submit" className='btn btn-primary m-1'>Save</button>
@@ -300,6 +339,23 @@ const Landing = () => {
             </div>
 
           </form>
+
+          <div>
+            <label htmlFor="file" className="sr-only">
+              Attach an image
+            </label>
+            <input id="file" type="file" onChange={handleFileChange} />
+          </div>
+          {file && (
+            <section>
+              File details:
+              <ul>
+                <li>Name: {file.name}</li>
+                <li>Type: {file.type}</li>
+                <li>Size: {file.size} bytes</li>
+              </ul>
+            </section>
+          )}
 
         </div>
       </div>

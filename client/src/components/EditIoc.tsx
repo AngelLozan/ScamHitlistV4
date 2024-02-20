@@ -26,6 +26,7 @@ type Ioc = {
   follow_up_date: Date;
   follow_up_count: number;
   comments: string;
+  image_url: string;
 }
 
 type Form = {
