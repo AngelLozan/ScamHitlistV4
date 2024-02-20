@@ -38,36 +38,46 @@ const Landing = () => {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
-      await handleUpload();
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      console.log("File set, now uploading")
+      // debugger;
+      await handleUpload(selectedFile);
     }
   };
 
-  const handleUpload = async () => {
-    if (file) {
+  const handleUpload = async (file: File) => {
+    // if (file) {
       console.log("Uploading file...");
 
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("evidence", file);
       formData.append("key", file.name);
 
       try {
+
         const result = await fetch("http://localhost:5000/api/upload_file", {
           method: "POST",
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        // },
           body: formData,
         });
 
         if (result.status !== 201) {
           Flash("Something went wrong uploading the file. Please try again", "warning");
-        } else {
+        } else if (result.status === 201) {
           const url = await result.text();
+          console.log("GOT URL: ", url);
           Flash("Successful file upload ✅", "success");
           setImageUrl(url);
         }
       } catch (error) {
         console.error(error);
       }
-    }
+    // } else {
+    //   console.log("Issue in upload")
+    // }
   };
 
   const handleCancel = async (event: React.MouseEvent) => {
@@ -83,6 +93,8 @@ const Landing = () => {
     setComment("");
     setStatus("");
     setImageUrl("");
+
+    setFile(null);
   };
 
   const resetForm = async (event: React.FormEvent) => {
@@ -98,6 +110,8 @@ const Landing = () => {
     setComment("");
     setStatus("");
     setImageUrl("");
+
+    setFile(null);
   };
 
 
@@ -148,6 +162,8 @@ const Landing = () => {
       setCount(0)
       setComment("");
       setImageUrl("");
+
+      setFile(null);
     } catch (error) {
       console.log(error);
     }
@@ -342,9 +358,9 @@ const Landing = () => {
 
           <div>
             <label htmlFor="file" className="sr-only">
-              Attach an image
+              Attach an image:
             </label>
-            <input id="file" type="file" onChange={handleFileChange} />
+            <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""}/>
           </div>
           {file && (
             <section>

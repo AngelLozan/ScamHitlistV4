@@ -1,15 +1,35 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
-import { PutObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-const client = new S3Client({region: process.env.AWS_REGION});
-import fs from 'fs';
-const formidable = require('formidable');
+// import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import AWS from 'aws-sdk'
+const multer  = require('multer');
+const upload = multer({});
+
+// import fs from 'fs';
+// import formidable, { Fields, Files } from 'formidable';
 
 const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// const client = new S3Client({
+//   region: process.env.AWS_REGION,
+//   credentials: {
+//     accessKeyId: process.env.AWS_ACCESS_KEY,
+//     secretAccessKey: process.env.AWS_SECRET_KEY,
+//   },
+// });
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: process.env.AWS_REGION
+});
+
+const s3 = new AWS.S3();
+
 
 // @dev Search functionality
 // @dev add to end of path /?q=query
@@ -392,40 +412,50 @@ app.delete("/api/iocs/:id", async (req, res) => {
   }
 });
 
-app.post("/api/upload_file", async (req, res) => {
-  const form = new formidable.IncomingForm();
+app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
+    // const { key, file } = req.body
+    const key = req.body.key;
+    const file = req.file;
 
-  form.parse(req, async (err: Error, fields: { key: string; }, files: { file: any; }) => {
-    if (err) {
-      return res.status(500).send("Failed to parse form data.");
-    }
+    console.log(req.body);
 
-    const { key } = fields; // Assuming the file key as part of the request body
-    const uploadedFile = files.file;
+    console.log("FILE: ", file)
+    console.log("KEY: ", key);
+
     const encodedFileName = encodeURIComponent(key);
+    const bucketName = process.env.BUCKET;
+    const fileName = key;
 
-    if (!uploadedFile) {
-      return res.status(400).send('No file uploaded.');
+    if (!bucketName) {
+      return res.status(500).send("Bucket name not specified in environment variables.");
     }
 
-    const input = {
-      Bucket: process.env.BUCKET,
-      Key: key,
-      Body: fs.readFileSync(uploadedFile.path), // Access the file content from the uploaded file's path
+    const params = {
+      Bucket: bucketName,
+      Key: "evidence", //fileName, //key,
+      Body: file?.buffer,
     };
 
-    const command = new PutObjectCommand(input);
+    // const input = {
+    //   Bucket: process.env.BUCKET,
+    //   Key: key,
+    //   Body: fs.readFileSync(file), // Access the file content from the uploaded file's path
+    // };
+
+    // const command = new PutObjectCommand(input);
 
     try {
-      const response = await client.send(command);
+      // const response = await client.send(command);
+      const response = s3.putObject(params).promise();
       console.log(response);
-      res.status(201).send(`https://${process.env.BUCKET}.s3.amazonaws.com/${encodedFileName}`);
+      // @dev the string is always this, need to fix: https://scam-hitlist.s3.eu-north-1.amazonaws.com/evidence
+      res.status(201).send(`https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`);
     } catch (error) {
       console.log(error);
       res.status(500).send("Something failed in file upload, please try again.")
     }
   });
-});
+
 
 app.listen(5000, () => {
   console.log("server running on localhost:5000");
