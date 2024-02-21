@@ -34,6 +34,7 @@ const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: process.env.BUCKET,
+        acl: 'public-read',
         key: function (req, file, cb) {
             cb(null, file.originalname);
         }
@@ -300,7 +301,7 @@ app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, } = req.body;
+    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, image_url } = req.body;
     const id = parseInt(req.params.id);
     if (!url || !report_method_one) {
         return res.status(400).send("👀 Url and Method 1 fields are required");
@@ -322,6 +323,7 @@ app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 follow_up_date,
                 follow_up_count,
                 comments,
+                image_url
             },
         });
         res.json(updatedIoc);

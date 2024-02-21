@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BoostrapModal from './BoostrapModal';
 import Flash from './Flash';
+import DataTable, { Row } from "./DataTable";
 
 
 type Form = {
@@ -20,6 +21,8 @@ const Settings = () => {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [formId, setFormId] = useState<number | null>(null);
   const [hostId, setHostId] = useState<number | null>(null);
+  const [rows, setIocs] = useState<Row[]>([]);
+  const [q, setQuery] = useState('');
 
   const handleDeleteForm = async (event: React.FormEvent, id: number) => {
     event.preventDefault();
@@ -93,7 +96,18 @@ const Settings = () => {
     }
   };
 
+  const fetchIocs = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/iocs/official_urls");
+      const rows = await response.json();
+      setIocs(rows);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    fetchIocs();
     fetchForms();
     fetchHosts();
   }, []);
@@ -149,10 +163,20 @@ const Settings = () => {
 
           </form>
           <div className='mb-3'>
-            <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts}/>
+            <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
           </div>
 
         </div>
+      </div>
+      <div className='row'>
+        {rows.length === 0 ?
+          <h1 className="m-3 text-center">Loading... 🕐</h1>
+          :
+          <div className="p3 m-3">
+            <h1 className="text-center m-3"><a style={{ textDecoration: 'none' }} href="/settings">Exodus Official Urls</a></h1>
+            <DataTable rows={rows} q={q} setQuery={setQuery} />
+          </div>
+        }
       </div>
     </div >
   );

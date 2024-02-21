@@ -52,8 +52,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [comments, setComment] = useState(theIoc ? theIoc.comments : "");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [formattedRD, setFormattedRD] = useState(new Date('2022-01-01T00:00:00.000Z'));
-  const [formattedFD, setFormattedFD] = useState(new Date());
+  const [formattedRD, setFormattedRD] = useState<Date | null>(null);
+  const [formattedFD, setFormattedFD] = useState<Date | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [image_url, setImageUrl] = useState("");
 
@@ -192,7 +192,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       console.log("Fetch ioc: ", ioc);
       setTheIoc(ioc);
       setUrl(ioc.url);
-      setRemoved(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
+      setRemoved(ioc.removed_date); //Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date
       setMethodOne(ioc.report_method_one);
       setMethodTwo(ioc.report_method_two);
       setForm(ioc.form);
@@ -206,10 +206,10 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
       // setFile(null);
 
-      const formatRD = new Date(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
+      const formatRD = ioc.removed_date;//new Date(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
 
       setFormattedRD(formatRD);
-      const formatFD = new Date(Object.is(ioc.follow_up_date, null) ? new Date() : ioc.follow_up_date);
+      const formatFD = ioc.follow_up_date; //new Date(Object.is(ioc.follow_up_date, null) ? new Date() : ioc.follow_up_date);
       setFormattedFD(formatFD);
     } catch (error) {
       console.log(error);
@@ -384,7 +384,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
         <div>
             <label htmlFor="file" className="sr-only">
-              Attach an image:
+              Replace/Attach an image:
             </label>
             <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""}/>
           </div>

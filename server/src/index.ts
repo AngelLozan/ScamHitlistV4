@@ -40,6 +40,7 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.BUCKET,
+    acl: 'public-read',
     // metadata: function (req, file, cb) {
     //   cb(null, {fieldName: file.fieldname});
     // },
@@ -377,6 +378,7 @@ app.put("/api/iocs/:id", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
+    image_url
   } = req.body;
   const id = parseInt(req.params.id);
   if (!url || !report_method_one) {
@@ -401,6 +403,7 @@ app.put("/api/iocs/:id", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
+        image_url
       },
     });
     res.json(updatedIoc);
