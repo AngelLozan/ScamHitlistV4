@@ -58,9 +58,9 @@ const Landing = () => {
 
         const result = await fetch("http://localhost:5000/api/upload_file", {
           method: "POST",
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        // },
+          headers: {
+            "fileName": `${file.name}`,
+        },
           body: formData,
         });
 

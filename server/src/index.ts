@@ -1,10 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
-// import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import AWS from 'aws-sdk'
-const multer  = require('multer');
-const upload = multer({});
+import { S3Client } from "@aws-sdk/client-s3";
+import { Credentials } from "@aws-sdk/types";
+// import AWS from "aws-sdk";
+const multer = require("multer");
+
+// const upload = multer({});
+const multerS3 = require('multer-s3')
 
 // import fs from 'fs';
 // import formidable, { Fields, Files } from 'formidable';
@@ -14,27 +17,42 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// const client = new S3Client({
-//   region: process.env.AWS_REGION,
-//   credentials: {
-//     accessKeyId: process.env.AWS_ACCESS_KEY,
-//     secretAccessKey: process.env.AWS_SECRET_KEY,
-//   },
-// });
+const credentials: Credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY || "",
+  secretAccessKey: process.env.AWS_SECRET_KEY || "",
+};
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
-  region: process.env.AWS_REGION
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: credentials,
 });
 
-const s3 = new AWS.S3();
+// AWS.config.update({
+//   accessKeyId: process.env.AWS_ACCESS_KEY,
+//   secretAccessKey: process.env.AWS_SECRET_KEY,
+//   region: process.env.AWS_REGION,
+// });
 
+// const s3 = new AWS.S3();
+
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET,
+    // metadata: function (req, file, cb) {
+    //   cb(null, {fieldName: file.fieldname});
+    // },
+    key: function (req: Request, file: Express.Multer.File, cb: (...args: any[]) => void ) {
+      cb(null, file.originalname)
+    }
+  })
+})
 
 // @dev Search functionality
 // @dev add to end of path /?q=query
 app.get("/api/iocs/search", async (req, res) => {
-  const { q , path } = req.query; //@dev ?q=hello path=/reported
+  const { q, path } = req.query; //@dev ?q=hello path=/reported
 
   console.log(q);
   console.log(path);
@@ -48,7 +66,7 @@ app.get("/api/iocs/search", async (req, res) => {
     try {
       const iocs = await prisma.ioc.findMany({
         where: {
-          status: 'reported',
+          status: "reported",
           OR: [
             {
               url: {
@@ -66,7 +84,7 @@ app.get("/api/iocs/search", async (req, res) => {
 
       return res.json(iocs);
     } catch (error) {
-      console.log("Error in reported search: ", error );
+      console.log("Error in reported search: ", error);
     }
   }
 
@@ -197,7 +215,7 @@ app.post("/api/iocs", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
-    image_url
+    image_url,
   } = req.body;
 
   if (!url || !report_method_one) {
@@ -217,7 +235,7 @@ app.post("/api/iocs", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
-        image_url
+        image_url,
       },
     });
     res.json(ioc);
@@ -228,10 +246,7 @@ app.post("/api/iocs", async (req, res) => {
 
 // @dev Create form
 app.post("/api/forms", async (req, res) => {
-  const {
-    url,
-    name,
-  } = req.body;
+  const { url, name } = req.body;
 
   if (!name) {
     return res.status(400).send("👀 Name field is required");
@@ -254,8 +269,10 @@ app.post("/api/forms", async (req, res) => {
     },
   });
 
-  if(existingForm !== null){
-    return res.status(400).send("👀 That form may be on the list, check again.");
+  if (existingForm !== null) {
+    return res
+      .status(400)
+      .send("👀 That form may be on the list, check again.");
   }
 
   try {
@@ -291,10 +308,7 @@ app.delete("/api/forms/:id", async (req, res) => {
 
 // @dev Create host
 app.post("/api/hosts", async (req, res) => {
-  const {
-    email,
-    name,
-  } = req.body;
+  const { email, name } = req.body;
 
   if (!name) {
     return res.status(400).send("👀 Name field is required");
@@ -340,7 +354,7 @@ app.get("/api/iocs/:id", async (req, res) => {
         id: ioc_id,
       },
     });
-    if (!ioc ) {
+    if (!ioc) {
       res.status(400).send("That does not exist");
     }
 
@@ -412,22 +426,27 @@ app.delete("/api/iocs/:id", async (req, res) => {
   }
 });
 
+
+
 app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
-    // const { key, file } = req.body
+
+  // const { key, file } = req.body
     const key = req.body.key;
     const file = req.file;
 
     console.log(req.body);
 
-    console.log("FILE: ", file)
+    console.log("FILE: ", file);
     console.log("KEY: ", key);
 
-    const encodedFileName = encodeURIComponent(key);
+    const encodedFileName = encodeURIComponent(file ? file.originalname : key);
     const bucketName = process.env.BUCKET;
     const fileName = key;
 
     if (!bucketName) {
-      return res.status(500).send("Bucket name not specified in environment variables.");
+      return res
+        .status(500)
+        .send("Bucket name not specified in environment variables.");
     }
 
     const params = {
@@ -446,16 +465,21 @@ app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
 
     try {
       // const response = await client.send(command);
-      const response = s3.putObject(params).promise();
-      console.log(response);
+      // const response = s3.putObject(params).promise();
+      // console.log(response);
       // @dev the string is always this, need to fix: https://scam-hitlist.s3.eu-north-1.amazonaws.com/evidence
-      res.status(201).send(`https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`);
+      res
+        .status(201)
+        .send(
+          `https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`
+        );
     } catch (error) {
       console.log(error);
-      res.status(500).send("Something failed in file upload, please try again.")
+      res
+        .status(500)
+        .send("Something failed in file upload, please try again.");
     }
-  });
-
+});
 
 app.listen(5000, () => {
   console.log("server running on localhost:5000");

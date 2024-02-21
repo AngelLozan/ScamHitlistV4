@@ -15,19 +15,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const multer = require('multer');
-const upload = multer({});
+const client_s3_1 = require("@aws-sdk/client-s3");
+const multer = require("multer");
+const multerS3 = require('multer-s3');
 const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-aws_sdk_1.default.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-    region: process.env.AWS_REGION
+const credentials = {
+    accessKeyId: process.env.AWS_ACCESS_KEY || "",
+    secretAccessKey: process.env.AWS_SECRET_KEY || "",
+};
+const s3 = new client_s3_1.S3Client({
+    region: process.env.AWS_REGION,
+    credentials: credentials,
 });
-const s3 = new aws_sdk_1.default.S3();
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.BUCKET,
+        key: function (req, file, cb) {
+            cb(null, file.originalname);
+        }
+    })
+});
 app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { q, path } = req.query;
     console.log(q);
@@ -40,7 +51,7 @@ app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, func
         try {
             const iocs = yield prisma.ioc.findMany({
                 where: {
-                    status: 'reported',
+                    status: "reported",
                     OR: [
                         {
                             url: {
@@ -158,7 +169,7 @@ app.get("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     res.json(hosts);
 }));
 app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, image_url } = req.body;
+    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, image_url, } = req.body;
     if (!url || !report_method_one) {
         return res.status(400).send("👀 Url and Method 1 fields are required");
     }
@@ -175,7 +186,7 @@ app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 follow_up_date,
                 follow_up_count,
                 comments,
-                image_url
+                image_url,
             },
         });
         res.json(ioc);
@@ -185,7 +196,7 @@ app.post("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 app.post("/api/forms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, name, } = req.body;
+    const { url, name } = req.body;
     if (!name) {
         return res.status(400).send("👀 Name field is required");
     }
@@ -206,7 +217,9 @@ app.post("/api/forms", (req, res) => __awaiter(void 0, void 0, void 0, function*
         },
     });
     if (existingForm !== null) {
-        return res.status(400).send("👀 That form may be on the list, check again.");
+        return res
+            .status(400)
+            .send("👀 That form may be on the list, check again.");
     }
     try {
         const form = yield prisma.form.create({
@@ -237,7 +250,7 @@ app.delete("/api/forms/:id", (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 }));
 app.post("/api/hosts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, name, } = req.body;
+    const { email, name } = req.body;
     if (!name) {
         return res.status(400).send("👀 Name field is required");
     }
@@ -338,11 +351,13 @@ app.post("/api/upload_file", upload.single('evidence'), (req, res) => __awaiter(
     console.log(req.body);
     console.log("FILE: ", file);
     console.log("KEY: ", key);
-    const encodedFileName = encodeURIComponent(key);
+    const encodedFileName = encodeURIComponent(file ? file.originalname : key);
     const bucketName = process.env.BUCKET;
     const fileName = key;
     if (!bucketName) {
-        return res.status(500).send("Bucket name not specified in environment variables.");
+        return res
+            .status(500)
+            .send("Bucket name not specified in environment variables.");
     }
     const params = {
         Bucket: bucketName,
@@ -350,13 +365,15 @@ app.post("/api/upload_file", upload.single('evidence'), (req, res) => __awaiter(
         Body: file === null || file === void 0 ? void 0 : file.buffer,
     };
     try {
-        const response = s3.putObject(params).promise();
-        console.log(response);
-        res.status(201).send(`https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`);
+        res
+            .status(201)
+            .send(`https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`);
     }
     catch (error) {
         console.log(error);
-        res.status(500).send("Something failed in file upload, please try again.");
+        res
+            .status(500)
+            .send("Something failed in file upload, please try again.");
     }
 }));
 app.listen(5000, () => {
