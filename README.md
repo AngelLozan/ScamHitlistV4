@@ -106,6 +106,6 @@ To do:
 - Add image input to form fields
 - Test server
 - Test client
-- Add hidden key field for image url in EditIoc.tsx
-- Fix evidence naming file upload s3
-- Test complete submission with evidence 
+
+
+- Test complete submission with evidence
