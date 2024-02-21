@@ -84,14 +84,29 @@ SELECT setval('"Form_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Form"), 1), fals
 - Exit with `\q`
 - `npx prisma db seed` (currently not functional. Seed with migrate csv step above in pgsql terminal through heroku.)
 - Issues establishing connection to Database or DATABASE_URL not found error from schema, run `npx prisma generate` again.
-
+- Adding migrations:
+````
+npx prisma migrate dev --name <migration-name> --create-only
+```
+- Then edit the migration in PostgreSQL (this allow null values ie optional)
+```
+ALTER TABLE myTable ALTER COLUMN myColumn DROP NOT NULL;
+```
+- Thenk apply migration:
+```
+npx prisma migrate dev
+```
 
 To do:
 - Fix seed command.
-- Create create pages for form and host in settings.
-- Create 'create' endpoint for form and host backend
 - Add additional API call functions to show page
 - Style show page
 - Option/low priority (style app)
 - integrate image attachment S3 bucket and add field for ioc to hold Image.
 - Add image input to form fields
+- Test server
+- Test client
+
+- Containerize
+- Data dashboard
+- Test complete submission with evidence

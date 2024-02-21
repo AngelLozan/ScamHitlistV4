@@ -1,23 +1,59 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
+import { S3Client } from "@aws-sdk/client-s3";
+import { Credentials } from "@aws-sdk/types";
+// import AWS from "aws-sdk";
+const multer = require("multer");
+
+// const upload = multer({});
+const multerS3 = require('multer-s3')
+
+// import fs from 'fs';
+// import formidable, { Fields, Files } from 'formidable';
 
 const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// function isDateOlderThanTwoWeeks(dateToCheck: Date) {
-//   const currentDate = new Date();
-//   const twoWeeksAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
-//   const date = new Date(dateToCheck);
-//   return date < twoWeeksAgo;
-// }
+const credentials: Credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY || "",
+  secretAccessKey: process.env.AWS_SECRET_KEY || "",
+};
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: credentials,
+});
+
+// AWS.config.update({
+//   accessKeyId: process.env.AWS_ACCESS_KEY,
+//   secretAccessKey: process.env.AWS_SECRET_KEY,
+//   region: process.env.AWS_REGION,
+// });
+
+// const s3 = new AWS.S3();
+
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET,
+    acl: 'public-read',
+    // metadata: function (req, file, cb) {
+    //   cb(null, {fieldName: file.fieldname});
+    // },
+    key: function (req: Request, file: Express.Multer.File, cb: (...args: any[]) => void ) {
+      cb(null, file.originalname)
+    }
+  })
+})
 
 // @dev Search functionality
 // @dev add to end of path /?q=query
 app.get("/api/iocs/search", async (req, res) => {
-  const { q , path } = req.query; //@dev ?q=hello path=/reported
+  const { q, path } = req.query; //@dev ?q=hello path=/reported
 
   console.log(q);
   console.log(path);
@@ -31,7 +67,7 @@ app.get("/api/iocs/search", async (req, res) => {
     try {
       const iocs = await prisma.ioc.findMany({
         where: {
-          status: 'reported',
+          status: "reported",
           OR: [
             {
               url: {
@@ -49,7 +85,7 @@ app.get("/api/iocs/search", async (req, res) => {
 
       return res.json(iocs);
     } catch (error) {
-      console.log("Error in reported search: ", error );
+      console.log("Error in reported search: ", error);
     }
   }
 
@@ -167,7 +203,7 @@ app.get("/api/hosts", async (req, res) => {
   res.json(hosts);
 });
 
-// @dev Create
+// @dev Create ioc
 app.post("/api/iocs", async (req, res) => {
   const {
     url,
@@ -180,6 +216,7 @@ app.post("/api/iocs", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
+    image_url,
   } = req.body;
 
   if (!url || !report_method_one) {
@@ -199,11 +236,113 @@ app.post("/api/iocs", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
+        image_url,
       },
     });
     res.json(ioc);
   } catch (error) {
     res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Create form
+app.post("/api/forms", async (req, res) => {
+  const { url, name } = req.body;
+
+  if (!name) {
+    return res.status(400).send("👀 Name field is required");
+  }
+
+  const existingForm = await prisma.form.findFirst({
+    where: {
+      OR: [
+        {
+          url: {
+            contains: url,
+          },
+        },
+        {
+          name: {
+            contains: name,
+          },
+        },
+      ],
+    },
+  });
+
+  if (existingForm !== null) {
+    return res
+      .status(400)
+      .send("👀 That form may be on the list, check again.");
+  }
+
+  try {
+    const form = await prisma.form.create({
+      data: {
+        url,
+        name,
+      },
+    });
+    res.json(form);
+  } catch (error) {
+    res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Delete form
+app.delete("/api/forms/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  if (!id || isNaN(id)) {
+    return res.status(400).send("ID field required");
+  }
+
+  try {
+    await prisma.form.delete({
+      where: { id },
+    });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send("Oops, something went wrong");
+  }
+});
+
+// @dev Create host
+app.post("/api/hosts", async (req, res) => {
+  const { email, name } = req.body;
+
+  if (!name) {
+    return res.status(400).send("👀 Name field is required");
+  }
+
+  try {
+    const host = await prisma.host.create({
+      data: {
+        email,
+        name,
+      },
+    });
+    res.json(host);
+  } catch (error) {
+    res.status(500).send(`👀 Oops, something went wrong: ${error}`);
+  }
+});
+
+// @dev Delete host
+app.delete("/api/hosts/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  if (!id || isNaN(id)) {
+    return res.status(400).send("ID field required");
+  }
+
+  try {
+    await prisma.host.delete({
+      where: { id },
+    });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send("Oops, something went wrong");
   }
 });
 
@@ -216,6 +355,10 @@ app.get("/api/iocs/:id", async (req, res) => {
         id: ioc_id,
       },
     });
+    if (!ioc) {
+      res.status(400).send("That does not exist");
+    }
+
     res.json(ioc);
   } catch (error) {
     res.status(500).send("Oops, something went wrong");
@@ -235,6 +378,7 @@ app.put("/api/iocs/:id", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
+    image_url
   } = req.body;
   const id = parseInt(req.params.id);
   if (!url || !report_method_one) {
@@ -259,6 +403,7 @@ app.put("/api/iocs/:id", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
+        image_url
       },
     });
     res.json(updatedIoc);
@@ -282,6 +427,61 @@ app.delete("/api/iocs/:id", async (req, res) => {
   } catch (error) {
     res.status(500).send("Oops, something went wrong");
   }
+});
+
+
+
+app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
+
+  // const { key, file } = req.body
+    const key = req.body.key;
+    const file = req.file;
+
+    console.log(req.body);
+
+    console.log("FILE: ", file);
+    console.log("KEY: ", key);
+
+    const encodedFileName = encodeURIComponent(file ? file.originalname : key);
+    const bucketName = process.env.BUCKET;
+    const fileName = key;
+
+    if (!bucketName) {
+      return res
+        .status(500)
+        .send("Bucket name not specified in environment variables.");
+    }
+
+    const params = {
+      Bucket: bucketName,
+      Key: "evidence", //fileName, //key,
+      Body: file?.buffer,
+    };
+
+    // const input = {
+    //   Bucket: process.env.BUCKET,
+    //   Key: key,
+    //   Body: fs.readFileSync(file), // Access the file content from the uploaded file's path
+    // };
+
+    // const command = new PutObjectCommand(input);
+
+    try {
+      // const response = await client.send(command);
+      // const response = s3.putObject(params).promise();
+      // console.log(response);
+      // @dev the string is always this, need to fix: https://scam-hitlist.s3.eu-north-1.amazonaws.com/evidence
+      res
+        .status(201)
+        .send(
+          `https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`
+        );
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .send("Something failed in file upload, please try again.");
+    }
 });
 
 app.listen(5000, () => {

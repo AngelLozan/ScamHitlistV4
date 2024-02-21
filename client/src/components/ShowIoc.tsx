@@ -23,6 +23,7 @@ type Ioc = {
   follow_up_date: Date;
   follow_up_count: number;
   comments: string;
+  image_url: string;
 }
 
 interface ShowIocProps {
@@ -48,7 +49,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
   useEffect(() => {
 
     fetchIoc();
-  }, []);
+  }, [Ioc]);
 
   return (
     <div className="p3 m-3">
@@ -61,6 +62,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
             <p>Status: {Ioc.status}</p>
             <p>Comments: {Ioc.comments}</p>
             <p>Report Method 1: {Ioc.report_method_one}</p>
+            {Ioc.image_url !== "" ? <img src={Ioc.image_url} className="img-thumbnail" alt="Evidence file" /> : false }
           </div>
 
           <hr />

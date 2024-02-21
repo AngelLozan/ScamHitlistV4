@@ -1,100 +1,5 @@
-/* body {
-  margin: 20px;
-  background-color: lightgrey;
-}
-
-.app-container {
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 600px) {
-  .app-container {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 20px;
-  }
-}
-
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-auto-rows: minmax(250px, auto);
-  gap: 20px;
-}
-
-.note-item {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.notes-header {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.notes-header button {
-  font-size: 16px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  max-width: fit-content;
-}
-
-h2 {
-  margin: 0;
-}
-
-.note-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-textarea,
-input {
-  border-radius: 5px;
-  border: 1px solid black;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.note-form button {
-  border-radius: 5px;
-  background-color: rgb(64, 154, 184);
-  border: none;
-  padding: 10px;
-  font-size: 16px;
-  color: white;
-}
-
-.note-form button:hover {
-  background-color: rgb(106, 175, 198);
-  cursor: pointer;
-}
-
-.edit-buttons {
-  display: flex;
-  justify-content: space-evenly;
-  gap: 5px;
-}
-
-.edit-buttons button {
-  flex: 1;
-}
-
-.edit-buttons button:last-of-type {
-  background-color: rgb(220, 89, 89);
-  color: white;
-} */
-
-
-input[type=text], select {
+input[type=text],
+select {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0px;
@@ -115,7 +20,7 @@ input[name=url] {
   cursor: copy;
 }
 
-button[type=submit] {
+/* button[type=submit] {
   width: 50%;
   background-color: #4CAF50;
   color: white;
@@ -130,7 +35,7 @@ button[type=submit] {
 
 button[type=submit]:hover {
   background-color: #45a049;
-}
+} */
 
 .button4 {
   background-color: white;
@@ -140,7 +45,9 @@ button[type=submit]:hover {
   border-radius: 12px;
 }
 
-.button4:hover {background-color: #e7e7e7;}
+.button4:hover {
+  background-color: #e7e7e7;
+}
 
 .button5 {
   background-color: lightgreen;
@@ -150,18 +57,22 @@ button[type=submit]:hover {
   border-radius: 12px;
 }
 
-.button5:hover {background-color: #e7e7e7;}
+.button5:hover {
+  background-color: #e7e7e7;
+}
 
 .navigation {
   padding: 0.5rem 1rem;
+  z-index: 1;
   height: 60px;
   width: 100%;
   display: flex;
   align-items: center;
   position: sticky;
-  position: -webkit-sticky; /* Safari */
-  top:0;
-/*  padding: 0.5rem 0rem;*/
+  position: -webkit-sticky;
+  /* Safari */
+  top: 0;
+  /*  padding: 0.5rem 0rem;*/
   background-color: #f3f3f3;
   color: black;
   box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
@@ -186,9 +97,11 @@ button[type=submit]:hover {
   border-radius: 12px;
 }
 
-.logout:hover {background-color: orangered;}
+.logout:hover {
+  background-color: orangered;
+}
 
-.signedIn{
+.signedIn {
   border-radius: 50%;
   padding: 5px;
   margin-left: auto;
@@ -211,11 +124,13 @@ button[type=submit]:hover {
   margin: 0;
   overflow: hidden;
 }
+
 .navigation-menu li {
 
   list-style-type: none;
   margin: 0 1rem;
 }
+
 .navigation-menu li a {
   text-decoration: none;
   display: block;
@@ -249,6 +164,7 @@ button[type=submit]:hover {
   transform: translateY(-50%);
   display: none;
 }
+
 .hamburger:hover {
   background-color: #2642af;
 }
@@ -257,7 +173,7 @@ button[type=submit]:hover {
 
 @media screen and (max-width: 768px) {
 
-   .hamburger {
+  .hamburger {
     display: block;
   }
 
@@ -280,18 +196,20 @@ button[type=submit]:hover {
     text-align: center;
     margin: 0;
   }
+
   .navigation-menu li a {
     color: black;
     width: 100%;
     padding: 1.5rem 0;
-    background: beige;
+    background: white;
   }
+
   .navigation-menu li:hover {
     background-color: lightgrey;
   }
 }
 
-.logout:hover{
+.logout:hover {
   background-color: orangered;
   color: white;
 }
@@ -365,7 +283,54 @@ button[type=submit]:hover {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
+
+/* .modal::backdrop {
+  background: hsl(0 0% 0% / 50%);
+}
+
+.modal {
+  max-width: 20rem;
+  padding: 2rem;
+  border: 0;
+  border-radius: 0.5rem;
+  position: relative;
+  border-radius: 1rem;
+  position: fixed;
+  box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
+  border: 1px solid #ccc;
+}
+
+.modal-close-btn {
+  font-size: 0.75em;
+  position: absolute;
+  top: 0.25em;
+  right: 0.25em;
+}
+
+.form-row + .form-row {
+  margin-top: 1rem;
+}
+
+.form-row label,
+.form-row input,
+.form-row select,
+.form-row button {
+  width: 100%;
+  display: block;
+}
+
+.msg-box {
+  padding: 1em;
+  max-width: 400px;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  border-radius: 0.5em;
+  border: 2px solid darkgreen;
+  background: lightgreen;
+  color: darkgreen;
+} */

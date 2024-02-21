@@ -4,14 +4,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") //@dev if shadowDatabaseUrl not picked up, just change this to create the migration.
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model Note {
-  id      Int    @id @default(autoincrement())
-  title   String
-  content String
-}
 
 model Form {
   id   Int    @id @default(autoincrement())
@@ -47,6 +43,7 @@ model Ioc {
   follow_up_date    DateTime?
   follow_up_count   Int?
   comments          String?
+  image_url         String?
 }
 
 // zf_status  Boolean  @default(false)

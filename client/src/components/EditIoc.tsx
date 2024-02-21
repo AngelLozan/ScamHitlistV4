@@ -4,13 +4,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import Flash from "./Flash";
 
-// enum Status {
-//   added = 0,
-//   reported,
-//   resolved,
-//   official_url,
-//   watchlist
-// }
 
 type Ioc = {
   id: number;
@@ -26,6 +19,7 @@ type Ioc = {
   follow_up_date: Date;
   follow_up_count: number;
   comments: string;
+  image_url: string;
 }
 
 type Form = {
@@ -58,9 +52,54 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
   const [comments, setComment] = useState(theIoc ? theIoc.comments : "");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [formattedRD, setFormattedRD] = useState(new Date('2022-01-01T00:00:00.000Z'));
-  const [formattedFD, setFormattedFD] = useState(new Date());
+  const [formattedRD, setFormattedRD] = useState<Date | null>(null);
+  const [formattedFD, setFormattedFD] = useState<Date | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [image_url, setImageUrl] = useState("");
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      console.log("File set, now uploading")
+      // debugger;
+      await handleUpload(selectedFile);
+    }
+  };
+
+  const handleUpload = async (file: File) => {
+    // if (file) {
+      console.log("Uploading file...");
+
+      const formData = new FormData();
+      formData.append("evidence", file);
+      formData.append("key", file.name);
+
+      try {
+
+        const result = await fetch("http://localhost:5000/api/upload_file", {
+          method: "POST",
+          headers: {
+            "fileName": `${file.name}`,
+        },
+          body: formData,
+        });
+
+        if (result.status !== 201) {
+          Flash("Something went wrong uploading the file. Please try again", "warning");
+        } else if (result.status === 201) {
+          const url = await result.text();
+          console.log("GOT URL: ", url);
+          Flash("Successful file upload ✅", "success");
+          setImageUrl(url);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    // } else {
+    //   console.log("Issue in upload")
+    // }
+  };
 
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -75,6 +114,9 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
     setComment(theIoc ? theIoc.comments : comments);
     setStatus(theIoc ? theIoc.status : status);
+    setImageUrl(theIoc ? theIoc.image_url : image_url);
+
+    setFile(null);
   };
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
@@ -103,7 +145,8 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       host,
       follow_up_date,
       follow_up_count,
-      comments
+      comments,
+      image_url
     });
 
     console.log("Body json: ", bodyJson);
@@ -134,6 +177,9 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       setFollowUp(follow_up_date);
       setCount(follow_up_count)
       setComment(comments);
+      setImageUrl(image_url);
+
+    // setFile(null);
     } catch (error) {
       console.log(error);
     }
@@ -146,7 +192,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       console.log("Fetch ioc: ", ioc);
       setTheIoc(ioc);
       setUrl(ioc.url);
-      setRemoved(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
+      setRemoved(ioc.removed_date); //Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date
       setMethodOne(ioc.report_method_one);
       setMethodTwo(ioc.report_method_two);
       setForm(ioc.form);
@@ -156,11 +202,14 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       setComment(ioc.comments);
       setStatus(ioc.status);
       console.log("Status: ", ioc.status);
+      setImageUrl(ioc.image_url);
 
-      const formatRD = new Date(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
+      // setFile(null);
+
+      const formatRD = ioc.removed_date;//new Date(Object.is(ioc.removed_date, null) ? new Date('2022-01-01T00:00:00.000Z') : ioc.removed_date);
 
       setFormattedRD(formatRD);
-      const formatFD = new Date(Object.is(ioc.follow_up_date, null) ? new Date() : ioc.follow_up_date);
+      const formatFD = ioc.follow_up_date; //new Date(Object.is(ioc.follow_up_date, null) ? new Date() : ioc.follow_up_date);
       setFormattedFD(formatFD);
     } catch (error) {
       console.log(error);
@@ -324,6 +373,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             />
           </div>
 
+          <input type="hidden" name="image_url" value={image_url} />
 
           <div className="d-flex justify-content-center">
             <button type="submit" className='btn btn-primary m-1'>Save</button>
@@ -331,6 +381,24 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
           </div>
 
         </form>
+
+        <div>
+            <label htmlFor="file" className="sr-only">
+              Replace/Attach an image:
+            </label>
+            <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""}/>
+          </div>
+          {file && (
+            <section>
+              File details:
+              <ul>
+                <li>Name: {file.name}</li>
+                <li>Type: {file.type}</li>
+                <li>Size: {file.size} bytes</li>
+              </ul>
+            </section>
+          )}
+
         <div className="d-flex justify-content-center">
           <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, id) }} className="btn btn-danger m-1">Delete</button>
         </div>

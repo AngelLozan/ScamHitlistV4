@@ -1,9 +1,10 @@
-// import { debug } from 'console';
+
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import Flash from "./Flash";
 import SearchBar from './SearchBar';
+import BoostrapModal from './BoostrapModal';
 
 
 type Form = {
@@ -32,8 +33,52 @@ const Landing = () => {
   const [comments, setComment] = useState("");
   const [forms, setForms] = useState<Form[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [image_url, setImageUrl] = useState("");
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      console.log("File set, now uploading")
+      // debugger;
+      await handleUpload(selectedFile);
+    }
+  };
 
+  const handleUpload = async (file: File) => {
+    // if (file) {
+      console.log("Uploading file...");
+
+      const formData = new FormData();
+      formData.append("evidence", file);
+      formData.append("key", file.name);
+
+      try {
+
+        const result = await fetch("http://localhost:5000/api/upload_file", {
+          method: "POST",
+          headers: {
+            "fileName": `${file.name}`,
+        },
+          body: formData,
+        });
+
+        if (result.status !== 201) {
+          Flash("Something went wrong uploading the file. Please try again", "warning");
+        } else if (result.status === 201) {
+          const url = await result.text();
+          console.log("GOT URL: ", url);
+          Flash("Successful file upload ✅", "success");
+          setImageUrl(url);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    // } else {
+    //   console.log("Issue in upload")
+    // }
+  };
 
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -47,6 +92,9 @@ const Landing = () => {
     setCount(0)
     setComment("");
     setStatus("");
+    setImageUrl("");
+
+    setFile(null);
   };
 
   const resetForm = async (event: React.FormEvent) => {
@@ -61,6 +109,9 @@ const Landing = () => {
     setCount(0)
     setComment("");
     setStatus("");
+    setImageUrl("");
+
+    setFile(null);
   };
 
 
@@ -77,7 +128,8 @@ const Landing = () => {
       host,
       follow_up_date,
       follow_up_count,
-      comments
+      comments,
+      image_url
     });
 
     console.log("Body json: ", bodyJson);
@@ -109,6 +161,9 @@ const Landing = () => {
       setFollowUp(null);
       setCount(0)
       setComment("");
+      setImageUrl("");
+
+      setFile(null);
     } catch (error) {
       console.log(error);
     }
@@ -240,6 +295,10 @@ const Landing = () => {
               </select>
 
             </div>
+            <div className='mb-3'>
+              <BoostrapModal name={"form"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
+            </div>
+
 
             <div className='mb-3'>
               <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
@@ -250,6 +309,9 @@ const Landing = () => {
                 ))}
               </select>
 
+            </div>
+            <div className='mb-3'>
+              <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
             </div>
 
             <div className='mb-3'>
@@ -285,6 +347,7 @@ const Landing = () => {
               />
             </div>
 
+            <input type="hidden" name="image_url" value={image_url} />
 
             <div className="d-flex justify-content-center">
               <button type="submit" className='btn btn-primary m-1'>Save</button>
@@ -292,6 +355,23 @@ const Landing = () => {
             </div>
 
           </form>
+
+          <div>
+            <label htmlFor="file" className="sr-only">
+              Attach an image:
+            </label>
+            <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""}/>
+          </div>
+          {file && (
+            <section>
+              File details:
+              <ul>
+                <li>Name: {file.name}</li>
+                <li>Type: {file.type}</li>
+                <li>Size: {file.size} bytes</li>
+              </ul>
+            </section>
+          )}
 
         </div>
       </div>

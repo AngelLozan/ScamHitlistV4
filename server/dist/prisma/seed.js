@@ -20,7 +20,7 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const seedIoc = yield prisma.$executeRaw `
-    COPY Ioc(id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
+    COPY "Ioc"(id, url, created_at, updated_at, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments)
     FROM '../data/iocs.csv',
     WITH DELIMITER ','
     Null AS 'null'

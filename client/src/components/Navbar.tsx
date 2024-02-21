@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <nav className="navigation">
       <a href="/" className="brand-name">
-        Scam Hitlist v4
+        <img style={{width: "50px"}} src={process.env.PUBLIC_URL + '/ban.png'} alt="a ban hammer" />
       </a>
       <button  className="hamburger" onClick={() => { console.log("click"); setIsNavExpanded(!isNavExpanded)}}>
 
