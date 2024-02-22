@@ -104,6 +104,7 @@ To do:
 - Add create form/host button to EditIoc.tsx
 
 - Option/low priority (style app)
+- Option/low priority (restrict file type attachment to image)
 
 - Test server
 - Test client
@@ -111,3 +112,5 @@ To do:
 - Containerize
 
 - Data dashboard
+
+- Protect routes to edit/delete. (all routes but home page.)

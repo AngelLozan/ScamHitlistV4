@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # env_file:
+  #   - path: ./.env
+  #     required: true
+
+  back-end:
+    build:
+      context: server
+    container_name: back_end
+    working_dir: /backend
+    networks:
+      - node-network
+    volumes:
+      - ./server:/backend
+      - /backend/node_modules
+    environment:
+      - PSQL_PASS=${PSQL_PASS}
+      - POSTGRES_PASSWORD=${PSQL_PASS}
+      - DATABASE_URL=${DATABASE_URL}
+      - AWS_REGION=${AWS_REGION}
+      - BUCKET=${BUCKET}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+    tty: true
+    ports:
+      - "5000:5000"
+    command: npm start
+    depends_on:
+      - db
+
+  front-end:
+    build:
+      context: client
+    container_name: front_end
+    working_dir: /frontend
+    networks:
+      - node-network
+    volumes:
+      - ./client:/frontend
+      - /frontend/node_modules
+    environment:
+      - PSQL_PASS=${PSQL_PASS}
+      - DATABASE_URL=${DATABASE_URL}
+    tty: true
+    ports:
+      - "3000:3000"
+    command: npm start
+
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - PSQL_PASS=${PSQL_PASS}
+      - POSTGRES_PASSWORD=${PSQL_PASS}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "5432:5432"
+    networks:
+      - node-network
+
+  nginx:
+    build:
+      context: nginx
+    container_name: nginx
+    restart: always
+    tty: true
+    ports:
+      - "8000:80"
+    networks:
+      - node-network
+    depends_on:
+      - back-end
+      - front-end
+
+networks:
+  node-network:
+    driver: bridge
