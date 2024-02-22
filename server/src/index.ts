@@ -3,15 +3,8 @@ import express from "express";
 import cors from "cors";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Credentials } from "@aws-sdk/types";
-// import AWS from "aws-sdk";
 const multer = require("multer");
-
-// const upload = multer({});
 const multerS3 = require('multer-s3')
-
-// import fs from 'fs';
-// import formidable, { Fields, Files } from 'formidable';
-
 const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
@@ -27,23 +20,11 @@ const s3 = new S3Client({
   credentials: credentials,
 });
 
-// AWS.config.update({
-//   accessKeyId: process.env.AWS_ACCESS_KEY,
-//   secretAccessKey: process.env.AWS_SECRET_KEY,
-//   region: process.env.AWS_REGION,
-// });
-
-// const s3 = new AWS.S3();
-
-
 const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.BUCKET,
     acl: 'public-read',
-    // metadata: function (req, file, cb) {
-    //   cb(null, {fieldName: file.fieldname});
-    // },
     key: function (req: Request, file: Express.Multer.File, cb: (...args: any[]) => void ) {
       cb(null, file.originalname)
     }
@@ -429,8 +410,7 @@ app.delete("/api/iocs/:id", async (req, res) => {
   }
 });
 
-
-
+// @dev Upload image and appends to create/edit Ioc forms (not directly to Ioc, append url to resource.)
 app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
 
   // const { key, file } = req.body

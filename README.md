@@ -98,15 +98,19 @@ npx prisma migrate dev
 ```
 
 To do:
-- Fix seed command.
-- Add additional API call functions to show page
-- Style show page
+- Fix seed command Prisma
+
+- Add additional API call functions to show page (ZF with image if present)
+- Add create form/host button to EditIoc.tsx
+
 - Option/low priority (style app)
-- integrate image attachment S3 bucket and add field for ioc to hold Image.
-- Add image input to form fields
+- Option/low priority (restrict file type attachment to image)
+
 - Test server
 - Test client
 
 - Containerize
+
 - Data dashboard
-- Test complete submission with evidence
+
+- Protect routes to edit/delete. (all routes but home page.)
