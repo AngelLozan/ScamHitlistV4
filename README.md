@@ -101,7 +101,6 @@ To do:
 - Fix seed command Prisma
 
 - Add additional API call functions to show page (ZF with image if present)
-- Add create form/host button to EditIoc.tsx
 
 - Option/low priority (style app)
 - Option/low priority (restrict file type attachment to image)
@@ -109,7 +108,7 @@ To do:
 - Test server
 - Test client
 
-- Containerize
+- Deploy with minikube (finish db-deployment.yaml)
 
 - Data dashboard
 

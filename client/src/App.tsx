@@ -5,10 +5,10 @@ import { All, ToBeReported, ReportedUrls, WatchList, FollowUp, Landing, Navbar, 
 
 
 
+
 const App = () => {
 
   return (
-
     <BrowserRouter>
       <Navbar />
 
@@ -18,6 +18,7 @@ const App = () => {
           path="/"
           element={<Landing />}
         />
+
         <Route
           path="/all"
           element={<All />}
