@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: scottloz/scamhitlistv4server
+        resources:
+          limits:
+            memory: "356Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: server
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP

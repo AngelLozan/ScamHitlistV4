@@ -109,7 +109,7 @@ To do:
 - Test server
 - Test client
 
-- Containerize
+- Deploy with minikube (finish db-deployment.yaml)
 
 - Data dashboard
 

@@ -12,3 +12,5 @@ export { default as SearchBar } from "./SearchBar";
 export { default as Flash } from "./Flash";
 export { default as Modal } from "./Modal";
 export { default as BoostrapModal } from "./BoostrapModal";
+export { default as Login } from "./Login";
+export { default as PrivateRoute } from "./privateRoute";

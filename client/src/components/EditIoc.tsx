@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import Flash from "./Flash";
+import BoostrapModal from './BoostrapModal';
+
 
 
 type Ioc = {
@@ -69,33 +71,33 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const handleUpload = async (file: File) => {
     // if (file) {
-      console.log("Uploading file...");
+    console.log("Uploading file...");
 
-      const formData = new FormData();
-      formData.append("evidence", file);
-      formData.append("key", file.name);
+    const formData = new FormData();
+    formData.append("evidence", file);
+    formData.append("key", file.name);
 
-      try {
+    try {
 
-        const result = await fetch("http://localhost:5000/api/upload_file", {
-          method: "POST",
-          headers: {
-            "fileName": `${file.name}`,
+      const result = await fetch("http://localhost:5000/api/upload_file", {
+        method: "POST",
+        headers: {
+          "fileName": `${file.name}`,
         },
-          body: formData,
-        });
+        body: formData,
+      });
 
-        if (result.status !== 201) {
-          Flash("Something went wrong uploading the file. Please try again", "warning");
-        } else if (result.status === 201) {
-          const url = await result.text();
-          console.log("GOT URL: ", url);
-          Flash("Successful file upload ✅", "success");
-          setImageUrl(url);
-        }
-      } catch (error) {
-        console.error(error);
+      if (result.status !== 201) {
+        Flash("Something went wrong uploading the file. Please try again", "warning");
+      } else if (result.status === 201) {
+        const url = await result.text();
+        console.log("GOT URL: ", url);
+        Flash("Successful file upload ✅", "success");
+        setImageUrl(url);
       }
+    } catch (error) {
+      console.error(error);
+    }
     // } else {
     //   console.log("Issue in upload")
     // }
@@ -179,7 +181,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       setComment(comments);
       setImageUrl(image_url);
 
-    // setFile(null);
+      // setFile(null);
     } catch (error) {
       console.log(error);
     }
@@ -328,6 +330,9 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
             </select>
 
           </div>
+          <div className='mb-3'>
+            <BoostrapModal name={"form"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
+          </div>
 
           <div className='mb-3'>
             <label htmlFor="host" className='form-label m-1'>Domain Host/Registrar</label>
@@ -338,6 +343,9 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
               ))}
             </select>
 
+          </div>
+          <div className='mb-3'>
+            <BoostrapModal name={"Domain host/Registrar"} fetchForms={fetchForms} fetchHosts={fetchHosts} />
           </div>
 
           <div className='mb-3'>
@@ -383,21 +391,21 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
         </form>
 
         <div>
-            <label htmlFor="file" className="sr-only">
-              Replace/Attach an image:
-            </label>
-            <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""}/>
-          </div>
-          {file && (
-            <section>
-              File details:
-              <ul>
-                <li>Name: {file.name}</li>
-                <li>Type: {file.type}</li>
-                <li>Size: {file.size} bytes</li>
-              </ul>
-            </section>
-          )}
+          <label htmlFor="file" className="sr-only">
+            Replace/Attach an image:
+          </label>
+          <input id="file" className="form-control" type="file" name="evidence" onChange={handleFileChange} placeholder={file !== null ? file.name : ""} />
+        </div>
+        {file && (
+          <section>
+            File details:
+            <ul>
+              <li>Name: {file.name}</li>
+              <li>Type: {file.type}</li>
+              <li>Size: {file.size} bytes</li>
+            </ul>
+          </section>
+        )}
 
         <div className="d-flex justify-content-center">
           <button onClick={(event) => { if (window.confirm('Are you sure you wish to delete this item?')) deleteIoc(event, id) }} className="btn btn-danger m-1">Delete</button>

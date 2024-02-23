@@ -8,6 +8,7 @@ services:
   back-end:
     build:
       context: server
+    
     container_name: back_end
     working_dir: /backend
     networks:
