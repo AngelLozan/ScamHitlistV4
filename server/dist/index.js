@@ -16,8 +16,10 @@ const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const client_s3_1 = require("@aws-sdk/client-s3");
+const http = require("http");
+const https = require("https");
 const multer = require("multer");
-const multerS3 = require('multer-s3');
+const multerS3 = require("multer-s3");
 const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -34,11 +36,11 @@ const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: process.env.BUCKET,
-        acl: 'public-read',
+        acl: "public-read",
         key: function (req, file, cb) {
             cb(null, file.originalname);
-        }
-    })
+        },
+    }),
 });
 app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { q, path } = req.query;
@@ -98,6 +100,36 @@ app.get("/api/iocs/search", (req, res) => __awaiter(void 0, void 0, void 0, func
 }));
 app.get("/api/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ message: "success!" });
+}));
+app.get("/api/zf", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { source, } = req.body;
+    const zfToken = process.env.ZF_TOKEN;
+    try {
+        let response = yield fetch("https://api.zerofox.com/2.0/threat_submit/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${zfToken}`,
+            },
+            body: JSON.stringify({
+                source: `${source}`,
+                alert_type: "url",
+                violation: "phishing",
+                entity_id: "1194610",
+                request_takedown: false,
+                notes: "Please review",
+            }),
+        });
+        let data = yield response.json();
+        console.log(data);
+        if (data.alert_id) {
+            res.status(201).send("Success");
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(501).send(`Something went wrong: ${error}`);
+    }
 }));
 app.get("/api/iocs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const iocs = yield prisma.ioc.findMany();
@@ -301,7 +333,7 @@ app.get("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, image_url } = req.body;
+    const { url, removed_date, status, report_method_one, report_method_two, form, host, follow_up_date, follow_up_count, comments, image_url, } = req.body;
     const id = parseInt(req.params.id);
     if (!url || !report_method_one) {
         return res.status(400).send("👀 Url and Method 1 fields are required");
@@ -323,7 +355,7 @@ app.put("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 follow_up_date,
                 follow_up_count,
                 comments,
-                image_url
+                image_url,
             },
         });
         res.json(updatedIoc);
@@ -347,7 +379,7 @@ app.delete("/api/iocs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).send("Oops, something went wrong");
     }
 }));
-app.post("/api/upload_file", upload.single('evidence'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/api/upload_file", upload.single("evidence"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const key = req.body.key;
     const file = req.file;
     console.log(req.body);
@@ -373,9 +405,7 @@ app.post("/api/upload_file", upload.single('evidence'), (req, res) => __awaiter(
     }
     catch (error) {
         console.log(error);
-        res
-            .status(500)
-            .send("Something failed in file upload, please try again.");
+        res.status(500).send("Something failed in file upload, please try again.");
     }
 }));
 app.listen(5000, () => {

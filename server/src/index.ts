@@ -3,10 +3,11 @@ import express from "express";
 import cors from "cors";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Credentials } from "@aws-sdk/types";
-const http = require('http');
-const https = require('https');
+// import fetch from 'node-fetch';
+const http = require("http");
+const https = require("https");
 const multer = require("multer");
-const multerS3 = require('multer-s3')
+const multerS3 = require("multer-s3");
 const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
@@ -26,12 +27,16 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.BUCKET,
-    acl: 'public-read',
-    key: function (req: Request, file: Express.Multer.File, cb: (...args: any[]) => void ) {
-      cb(null, file.originalname)
-    }
-  })
-})
+    acl: "public-read",
+    key: function (
+      req: Request,
+      file: Express.Multer.File,
+      cb: (...args: any[]) => void
+    ) {
+      cb(null, file.originalname);
+    },
+  }),
+});
 
 // @dev Search functionality
 // @dev add to end of path /?q=query
@@ -102,13 +107,35 @@ app.get("/api/", async (req, res) => {
 });
 
 // @dev Submit to Zero Fox endpoint
-app.get('/api/zf', async (req, res) => {
-  const {} = req;
-  
+app.get("/api/zf", async (req, res) => {
+  const { source,  } = req.body;
+  const zfToken = process.env.ZF_TOKEN;
+
   try {
-    const res = await fetch("")
+    let response = await fetch("https://api.zerofox.com/2.0/threat_submit/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${zfToken}`,
+      },
+      body: JSON.stringify({
+        source: `${source}`,
+        alert_type: "url",
+        violation: "phishing",
+        entity_id: "1194610",
+        request_takedown: false,
+        notes: "Please review",
+      }),
+    });
+
+    let data: any = await response.json();
+    console.log(data);
+    if (data.alert_id) {
+      res.status(201).send("Success");
+    }
   } catch (error: unknown) {
     console.log(error);
+    res.status(501).send(`Something went wrong: ${error}`);
   }
   // const options ={
   //   hostmname: '',
@@ -129,7 +156,6 @@ app.get('/api/zf', async (req, res) => {
 
   //   request.end();
   // })
-
 });
 
 // @dev All iocs
@@ -392,7 +418,7 @@ app.put("/api/iocs/:id", async (req, res) => {
     follow_up_date,
     follow_up_count,
     comments,
-    image_url
+    image_url,
   } = req.body;
   const id = parseInt(req.params.id);
   if (!url || !report_method_one) {
@@ -417,7 +443,7 @@ app.put("/api/iocs/:id", async (req, res) => {
         follow_up_date,
         follow_up_count,
         comments,
-        image_url
+        image_url,
       },
     });
     res.json(updatedIoc);
@@ -444,57 +470,54 @@ app.delete("/api/iocs/:id", async (req, res) => {
 });
 
 // @dev Upload image and appends to create/edit Ioc forms (not directly to Ioc, append url to resource.)
-app.post("/api/upload_file", upload.single('evidence'), async (req, res) => {
-
+app.post("/api/upload_file", upload.single("evidence"), async (req, res) => {
   // const { key, file } = req.body
-    const key = req.body.key;
-    const file = req.file;
+  const key = req.body.key;
+  const file = req.file;
 
-    console.log(req.body);
+  console.log(req.body);
 
-    console.log("FILE: ", file);
-    console.log("KEY: ", key);
+  console.log("FILE: ", file);
+  console.log("KEY: ", key);
 
-    const encodedFileName = encodeURIComponent(file ? file.originalname : key);
-    const bucketName = process.env.BUCKET;
-    const fileName = key;
+  const encodedFileName = encodeURIComponent(file ? file.originalname : key);
+  const bucketName = process.env.BUCKET;
+  const fileName = key;
 
-    if (!bucketName) {
-      return res
-        .status(500)
-        .send("Bucket name not specified in environment variables.");
-    }
+  if (!bucketName) {
+    return res
+      .status(500)
+      .send("Bucket name not specified in environment variables.");
+  }
 
-    const params = {
-      Bucket: bucketName,
-      Key: "evidence", //fileName, //key,
-      Body: file?.buffer,
-    };
+  const params = {
+    Bucket: bucketName,
+    Key: "evidence", //fileName, //key,
+    Body: file?.buffer,
+  };
 
-    // const input = {
-    //   Bucket: process.env.BUCKET,
-    //   Key: key,
-    //   Body: fs.readFileSync(file), // Access the file content from the uploaded file's path
-    // };
+  // const input = {
+  //   Bucket: process.env.BUCKET,
+  //   Key: key,
+  //   Body: fs.readFileSync(file), // Access the file content from the uploaded file's path
+  // };
 
-    // const command = new PutObjectCommand(input);
+  // const command = new PutObjectCommand(input);
 
-    try {
-      // const response = await client.send(command);
-      // const response = s3.putObject(params).promise();
-      // console.log(response);
-      // @dev the string is always this, need to fix: https://scam-hitlist.s3.eu-north-1.amazonaws.com/evidence
-      res
-        .status(201)
-        .send(
-          `https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`
-        );
-    } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .send("Something failed in file upload, please try again.");
-    }
+  try {
+    // const response = await client.send(command);
+    // const response = s3.putObject(params).promise();
+    // console.log(response);
+    // @dev the string is always this, need to fix: https://scam-hitlist.s3.eu-north-1.amazonaws.com/evidence
+    res
+      .status(201)
+      .send(
+        `https://${process.env.BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedFileName}`
+      );
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Something failed in file upload, please try again.");
+  }
 });
 
 app.listen(5000, () => {

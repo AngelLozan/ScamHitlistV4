@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import EditIoc from "./EditIoc";
 import PostZF from './PostZF';
 
-enum Status {
-  added = 0,
-  reported,
-  resolved,
-  official_url,
-  watchlist
-}
+// enum Status {
+//   added = 0,
+//   reported,
+//   resolved,
+//   official_url,
+//   watchlist
+// }
 
 type Ioc = {
   id: number;
@@ -16,7 +16,7 @@ type Ioc = {
   created_at: Date;
   updated_at: Date;
   removed_date: Date;
-  status: Status;
+  status: string;
   report_method_one: string;
   report_method_two: string;
   form: string;
@@ -64,7 +64,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
             <p>Comments: {Ioc.comments}</p>
             <p>Report Method 1: {Ioc.report_method_one}</p>
             {Ioc.image_url !== null ? <img src={Ioc.image_url} className="img-thumbnail" alt="Evidence file" /> : false }
-            <button className="btn btn-primary m-3" data-url={Ioc.url} onClick={PostZF}>Submit to ZeroFox</button>
+            { Ioc.status === 'added' || Ioc.status === 'reported' ? <button className="btn btn-primary m-3" data-url={Ioc.url} onClick={PostZF}>Submit to ZeroFox</button> : false }
           </div>
 
           <hr />

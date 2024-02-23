@@ -101,6 +101,7 @@ To do:
 - Fix seed command Prisma
 
 - Add ZF call to server with functions.
+- Complete ZF ui and options on show page (email type, flash messages, ect.)
 
 - Test server
 - Test client

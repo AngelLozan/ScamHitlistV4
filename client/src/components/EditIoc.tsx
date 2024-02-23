@@ -203,7 +203,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
       setCount(ioc.follow_up_count)
       setComment(ioc.comments);
       setStatus(ioc.status);
-      console.log("Status: ", ioc.status);
+      // console.log("Status: ", typeof(ioc.status));
       setImageUrl(ioc.image_url);
 
       // setFile(null);

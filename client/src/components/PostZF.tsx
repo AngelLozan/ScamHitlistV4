@@ -3,7 +3,6 @@ import Flash from './Flash';
 
 const PostZF = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
   e.preventDefault();
-  let data;
   let url = e.currentTarget.getAttribute('data-url')?.trim();
 
   if (url) {
@@ -43,14 +42,14 @@ const PostZF = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       body: JSON.stringify({ "source": `${url}`, "alert_type": `${type}`, "violation": `${violation}`, "entity_id": "1194610", "request_takedown": false, "notes": "For review" })
     })
 
-    if (res.ok) {
-      data = await res.json();
+    let data = await res.text();
+
+    if (res.status === 201) {
       console.log(data);
+      Flash('Successfully submitted IOC to ZeroFox ✅', 'success');
     } else {
       console.error("Request failed with status:", res.status);
-    }
-    if (data.alert_id) {
-      Flash('Successfully submitted IOC to ZeroFox ✅', 'success');
+      Flash(`${data}`, "warning");
     }
 
   } catch (error: any) {
