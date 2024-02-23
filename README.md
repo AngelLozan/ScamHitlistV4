@@ -100,11 +100,7 @@ npx prisma migrate dev
 To do:
 - Fix seed command Prisma
 
-- Add additional API call functions to show page (ZF with image if present)
-
-- Option/low priority (style app)
-- Option/low priority (restrict file type attachment to image)
-- Optional? Protect routes to edit/delete. (all routes but home page.)
+- Add ZF call to server with functions.
 
 - Test server
 - Test client
@@ -112,3 +108,7 @@ To do:
 - Deploy with minikube (finish db-deployment.yaml)
 
 - Data dashboard
+
+- Option/low priority (style app)
+- Option/low priority (restrict file type attachment to image)
+- Optional? Protect routes to edit/delete. (all routes but home page.)

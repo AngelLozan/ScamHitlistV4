@@ -104,25 +104,31 @@ app.get("/api/", async (req, res) => {
 // @dev Submit to Zero Fox endpoint
 app.get('/api/zf', async (req, res) => {
   const {} = req;
-  const options ={
-    hostmname: '',
-    path: '',
-    method: 'POST'
+  
+  try {
+    const res = await fetch("")
+  } catch (error: unknown) {
+    console.log(error);
   }
+  // const options ={
+  //   hostmname: '',
+  //   path: '',
+  //   method: 'POST'
+  // }
 
-  const request = https.request(options, response=> {
-    let data = "";
-    response.on('data', chunk => {
-      data += chunk;
-    })
+  // const request = https.request(options, response=> {
+  //   let data = "";
+  //   response.on('data', chunk => {
+  //     data += chunk;
+  //   })
 
-    response.on('end', () => {
-      console.log(data);
-      res.end(data);
-    })
+  //   response.on('end', () => {
+  //     console.log(data);
+  //     res.end(data);
+  //   })
 
-    request.end();
-  })
+  //   request.end();
+  // })
 
 });
 
