@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Credentials } from "@aws-sdk/types";
+const http = require('http');
+const https = require('https');
 const multer = require("multer");
 const multerS3 = require('multer-s3')
 const prisma = new PrismaClient();
@@ -97,6 +99,31 @@ app.get("/api/iocs/search", async (req, res) => {
 // @dev Test api
 app.get("/api/", async (req, res) => {
   res.json({ message: "success!" });
+});
+
+// @dev Submit to Zero Fox endpoint
+app.get('/api/zf', async (req, res) => {
+  const {} = req;
+  const options ={
+    hostmname: '',
+    path: '',
+    method: 'POST'
+  }
+
+  const request = https.request(options, response=> {
+    let data = "";
+    response.on('data', chunk => {
+      data += chunk;
+    })
+
+    response.on('end', () => {
+      console.log(data);
+      res.end(data);
+    })
+
+    request.end();
+  })
+
 });
 
 // @dev All iocs

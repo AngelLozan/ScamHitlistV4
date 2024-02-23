@@ -104,6 +104,7 @@ To do:
 
 - Option/low priority (style app)
 - Option/low priority (restrict file type attachment to image)
+- Optional? Protect routes to edit/delete. (all routes but home page.)
 
 - Test server
 - Test client
@@ -111,5 +112,3 @@ To do:
 - Deploy with minikube (finish db-deployment.yaml)
 
 - Data dashboard
-
-- Protect routes to edit/delete. (all routes but home page.)

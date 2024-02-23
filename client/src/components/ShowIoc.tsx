@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import EditIoc from "./EditIoc";
+import PostZF from './PostZF';
 
 enum Status {
   added = 0,
@@ -63,6 +64,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
             <p>Comments: {Ioc.comments}</p>
             <p>Report Method 1: {Ioc.report_method_one}</p>
             {Ioc.image_url !== null ? <img src={Ioc.image_url} className="img-thumbnail" alt="Evidence file" /> : false }
+            <button className="btn btn-primary m-3" data-url={Ioc.url} onClick={PostZF}>Submit to ZeroFox</button>
           </div>
 
           <hr />
