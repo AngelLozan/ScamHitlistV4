@@ -37,7 +37,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
 
   const fetchIoc = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/${id}`);
+      const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
       const Ioc = await response.json();
       setIoc(Ioc);
     } catch (error) {
@@ -45,12 +45,18 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
     }
   };
 
+const handleIocUpdate = () => {
+    fetchIoc();
+  };
+
 
 
   useEffect(() => {
 
     fetchIoc();
-  }, [Ioc]);
+  }, []);
+
+
 
   return (
     <div className="p3 m-3">
@@ -71,7 +77,7 @@ const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
           <div className="m-3">
             <h3 className="text-center">Edit Ioc:</h3>
             <p className="text-center">Changes only apply after you save them.</p>
-            < EditIoc id={Ioc.id} />
+            < EditIoc id={Ioc.id} onIocUpdate={handleIocUpdate}/>
           </div>
         </>
       ) : (

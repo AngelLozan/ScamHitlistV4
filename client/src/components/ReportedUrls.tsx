@@ -9,7 +9,7 @@ const ReportedUrls = () => {
 
   const fetchIocs = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/iocs/reported");
+      const response = await fetch("http://localhost:8080/api/iocs/reported");
       const rows = await response.json();
       setIocs(rows);
     } catch (error) {
@@ -25,7 +25,7 @@ const ReportedUrls = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}&path=${window.location.pathname}`);
+      const response = await fetch(`http://localhost:8080/api/iocs/search/?q=${q}&path=${window.location.pathname}`);
       const rows: Row[] = await response.json();
       setIocs(rows);
       setQuery('');

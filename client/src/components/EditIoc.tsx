@@ -38,9 +38,10 @@ type Host = {
 
 interface EditIocProps {
   id: number;
+  onIocUpdate: () => void;
 }
 
-const EditIoc: React.FC<EditIocProps> = ({ id }) => {
+const EditIoc: React.FC<EditIocProps> = ({ id, onIocUpdate }) => {
   const [theIoc, setTheIoc] = useState<Ioc>()
   const [url, setUrl] = useState(theIoc ? theIoc.url : "");
   const [removed_date, setRemoved] = useState<Date | null>(null);
@@ -79,7 +80,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
     try {
 
-      const result = await fetch("http://localhost:5000/api/upload_file", {
+      const result = await fetch("http://localhost:8080/api/upload_file", {
         method: "POST",
         headers: {
           "fileName": `${file.name}`,
@@ -105,6 +106,15 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
+    try{
+      const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
+      const ioc: Ioc = await response.json();
+      console.log("Fetch ioc: ", ioc);
+      setTheIoc(ioc);
+    } catch (e){
+      console.log(e);
+    }
+    
     console.log("THE IOC: ", theIoc);
     setUrl(theIoc ? theIoc.url : "");
     setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
@@ -123,7 +133,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
     event.stopPropagation();
-    const res = await fetch(`http://localhost:5000/api/iocs/${id}`, {
+    const res = await fetch(`http://localhost:8080/api/iocs/${id}`, {
       method: "DELETE"
     })
     if (res.status === 204) {
@@ -154,7 +164,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
     console.log("Body json: ", bodyJson);
 
     try {
-      let res = await fetch(`http://localhost:5000/api/iocs/${id}`, {
+      let res = await fetch(`http://localhost:8080/api/iocs/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -167,6 +177,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
         Flash(errorMsg, "danger");
       } else {
         Flash("Successfully updated the IOC ✅", "success");
+        onIocUpdate();
       }
 
       setUrl(url);
@@ -189,7 +200,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const fetchIoc = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/${id}`);
+      const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
       const ioc: Ioc = await response.json();
       console.log("Fetch ioc: ", ioc);
       setTheIoc(ioc);
@@ -221,7 +232,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const fetchForms = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/forms");
+      const response = await fetch("http://localhost:8080/api/forms");
       const forms: Form[] = await response.json();
       setForms(forms);
     } catch (error) {
@@ -232,7 +243,7 @@ const EditIoc: React.FC<EditIocProps> = ({ id }) => {
 
   const fetchHosts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/hosts");
+      const response = await fetch("http://localhost:8080/api/hosts");
       const hosts: Host[] = await response.json();
       setHosts(hosts);
     } catch (error) {

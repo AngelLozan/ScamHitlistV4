@@ -100,7 +100,9 @@ npx prisma migrate dev
 To do:
 - Fix seed command Prisma
 
-- Add ZF call to server with functions.
+- restrict file type upload to img
+
+- Add ZF call to server with functions (test it out)
 - Complete ZF ui and options on show page (email type, flash messages, ect.)
 
 - Test server
@@ -110,6 +112,5 @@ To do:
 
 - Data dashboard
 
-- Option/low priority (style app)
-- Option/low priority (restrict file type attachment to image)
+- Option/low priority (style app, could be prettier)
 - Optional? Protect routes to edit/delete. (all routes but home page.)

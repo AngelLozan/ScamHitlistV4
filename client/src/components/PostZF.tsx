@@ -36,7 +36,7 @@ const PostZF = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 
   try {
     // let res = await fetch(`/zf/${id}`, {
-    let res = await fetch('http://localhost:5000/api/zf', {
+    let res = await fetch('http://localhost:8080/api/zf', {
       method: 'GET',
       headers: { "Content-Type": "application/json", "Accept": "application/json", "X-CSRF-Token": `${csrfToken}` },
       body: JSON.stringify({ "source": `${url}`, "alert_type": `${type}`, "violation": `${violation}`, "entity_id": "1194610", "request_takedown": false, "notes": "For review" })

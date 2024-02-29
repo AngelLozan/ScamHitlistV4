@@ -30,7 +30,7 @@ const BoostrapModal: React.FC<BoostrapModalProps> = ({ name, fetchForms, fetchHo
       // });
       // console.log(bddy);
       try {
-        let res = await fetch('http://localhost:5000/api/forms', {
+        let res = await fetch('http://localhost:8080/api/forms', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -49,6 +49,8 @@ const BoostrapModal: React.FC<BoostrapModalProps> = ({ name, fetchForms, fetchHo
           Flash("Successfully added the Form ✅", "success");
           handleClose();
           fetchForms();
+          setTitle("");
+          setLink("");
         }
       } catch (error) {
         console.log(error);
@@ -58,7 +60,7 @@ const BoostrapModal: React.FC<BoostrapModalProps> = ({ name, fetchForms, fetchHo
       }
     } else {
       try {
-        let res = await fetch('http://localhost:5000/api/hosts', {
+        let res = await fetch('http://localhost:8080/api/hosts', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +104,7 @@ const BoostrapModal: React.FC<BoostrapModalProps> = ({ name, fetchForms, fetchHo
         <Modal.Body>
           <div className='m-3'>
             <form
-              onSubmit={(event) => createEvent(event)}
+              // onSubmit={(event) => createEvent(event)}
             >
               <div className='mb-3'>
                 <label htmlFor="title" className='form-label m-1'>Name/Title/Label</label>
@@ -139,7 +141,7 @@ const BoostrapModal: React.FC<BoostrapModalProps> = ({ name, fetchForms, fetchHo
                 </div>
               }
               <div className="d-flex justify-content-center">
-                <button type="submit" className='btn btn-primary m-1'>Save</button>
+                <button type="button" onClick={e => createEvent(e)} className='btn btn-primary m-1'>Save</button>
               </div>
             </form>
           </div>

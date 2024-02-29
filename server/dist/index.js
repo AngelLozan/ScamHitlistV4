@@ -408,7 +408,7 @@ app.post("/api/upload_file", upload.single("evidence"), (req, res) => __awaiter(
         res.status(500).send("Something failed in file upload, please try again.");
     }
 }));
-app.listen(5000, () => {
-    console.log("server running on localhost:5000");
+app.listen(8080, () => {
+    console.log("server running on localhost:8080");
 });
 //# sourceMappingURL=index.js.map

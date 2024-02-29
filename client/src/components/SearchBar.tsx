@@ -13,7 +13,7 @@ const SearchBar = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}`);
+      const response = await fetch(`http://localhost:8080/api/iocs/search/?q=${q}`);
       const found = await response.json();
       if (found.length > 0) {
         Flash("Looks like this already exists in the database. Search on the All page.", "warning")

@@ -33,7 +33,7 @@ const Settings = () => {
     }
     if (window.confirm('Are you sure you wish to delete this form?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/forms/${id}`, {
+        const res = await fetch(`http://localhost:8080/api/forms/${id}`, {
           method: "DELETE"
         })
         if (res.status === 204) {
@@ -58,7 +58,7 @@ const Settings = () => {
     }
     if (window.confirm('Are you sure you wish to delete this item?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/hosts/${id}`, {
+        const res = await fetch(`http://localhost:8080/api/hosts/${id}`, {
           method: "DELETE"
         })
         if (res.status === 204) {
@@ -77,7 +77,7 @@ const Settings = () => {
 
   const fetchForms = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/forms");
+      const response = await fetch("http://localhost:8080/api/forms");
       const forms: Form[] = await response.json();
       setForms(forms);
     } catch (error) {
@@ -88,7 +88,7 @@ const Settings = () => {
 
   const fetchHosts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/hosts");
+      const response = await fetch("http://localhost:8080/api/hosts");
       const hosts: Host[] = await response.json();
       setHosts(hosts);
     } catch (error) {
@@ -98,7 +98,7 @@ const Settings = () => {
 
   const fetchIocs = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/iocs/official_urls");
+      const response = await fetch("http://localhost:8080/api/iocs/official_urls");
       const rows = await response.json();
       setIocs(rows);
     } catch (error) {

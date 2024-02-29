@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-datepicker": "^4.19.6"
+    "@types/react-datepicker": "^4.19.6",
+    "jest": "^27.5.1"
   }
 }

@@ -56,7 +56,7 @@ const Landing = () => {
 
       try {
 
-        const result = await fetch("http://localhost:5000/api/upload_file", {
+        const result = await fetch("http://localhost:8080/api/upload_file", {
           method: "POST",
           headers: {
             "fileName": `${file.name}`,
@@ -135,7 +135,7 @@ const Landing = () => {
     console.log("Body json: ", bodyJson);
 
     try {
-      let res = await fetch('http://localhost:5000/api/iocs', {
+      let res = await fetch('http://localhost:8080/api/iocs', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +172,7 @@ const Landing = () => {
 
   const fetchForms = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/forms");
+      const response = await fetch("http://localhost:8080/api/forms");
       const forms: Form[] = await response.json();
       setForms(forms);
     } catch (error) {
@@ -183,7 +183,7 @@ const Landing = () => {
 
   const fetchHosts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/hosts");
+      const response = await fetch("http://localhost:8080/api/hosts");
       const hosts: Host[] = await response.json();
       setHosts(hosts);
     } catch (error) {

@@ -9,7 +9,7 @@ const All = () => {
 
   const fetchIocs = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/iocs");
+      const response = await fetch("http://localhost:8080/api/iocs");
       const rows = await response.json();
       setIocs(rows);
     } catch (error) {
@@ -25,7 +25,7 @@ const All = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/iocs/search/?q=${q}`);
+      const response = await fetch(`http://localhost:8080/api/iocs/search/?q=${q}`);
       const rows: Row[] = await response.json();
       setIocs(rows);
       setQuery('');
