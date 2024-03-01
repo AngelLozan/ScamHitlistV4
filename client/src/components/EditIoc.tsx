@@ -107,28 +107,34 @@ const EditIoc: React.FC<EditIocProps> = ({ id, onIocUpdate }) => {
   const handleCancel = async (event: React.MouseEvent) => {
     event.preventDefault();
     try{
-      const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
-      const ioc: Ioc = await response.json();
-      console.log("Fetch ioc: ", ioc);
-      setTheIoc(ioc);
+      // const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
+      // const ioc: Ioc = await response.json();
+      // console.log("Fetch ioc: ", ioc);
+      // setTheIoc(ioc);
+    
+
+    const response = await fetch(`http://localhost:8080/api/iocs/${id}`);
+    const ioc: Ioc = await response.json();
+    console.log("Fetch ioc: ", ioc);
+    await setTheIoc(ioc);
+    
+    // console.log("THE IOC: ", theIoc);
+    // setUrl(theIoc ? theIoc.url : "");
+    // setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
+    // setMethodOne("N/A");
+    // setMethodTwo("N/A");
+    // setForm(theIoc && theIoc.form !== null ? theIoc.form : "");
+    // setHost(theIoc && theIoc.host !== null ? theIoc.host : "");
+    // setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
+    // setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
+    // setComment(theIoc ? theIoc.comments : comments);
+    // setStatus(theIoc ? theIoc.status : status);
+    // setImageUrl(theIoc ? theIoc.image_url : image_url);
+
+    // setFile(null);
     } catch (e){
       console.log(e);
     }
-    
-    console.log("THE IOC: ", theIoc);
-    setUrl(theIoc ? theIoc.url : "");
-    setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
-    setMethodOne("N/A");
-    setMethodTwo("N/A");
-    setForm(theIoc && theIoc.form !== null ? theIoc.form : "");
-    setHost(theIoc && theIoc.host !== null ? theIoc.host : "");
-    setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
-    setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
-    setComment(theIoc ? theIoc.comments : comments);
-    setStatus(theIoc ? theIoc.status : status);
-    setImageUrl(theIoc ? theIoc.image_url : image_url);
-
-    setFile(null);
   };
 
   const deleteIoc = async (event: React.MouseEvent, id: number) => {
@@ -256,6 +262,24 @@ const EditIoc: React.FC<EditIocProps> = ({ id, onIocUpdate }) => {
     fetchForms();
     fetchHosts();
   }, []);
+
+  useEffect(() => {
+  // Check if theIoc is not null
+  if (theIoc) {
+    setUrl(theIoc.url);
+    setRemoved(theIoc.removed_date ? new Date(theIoc.removed_date) : removed_date);
+    setMethodOne("N/A");
+    setMethodTwo("N/A");
+    setForm(theIoc.form ?? "");
+    setHost(theIoc.host ?? "");
+    setFollowUp(theIoc.follow_up_date ? new Date(theIoc.follow_up_date) : follow_up_date);
+    setCount(theIoc.follow_up_count ?? 0);
+    setComment(theIoc.comments ?? "");
+    setStatus(theIoc.status ?? "");
+    setImageUrl(theIoc.image_url ?? "");
+    setFile(null);
+  }
+}, [theIoc]);
 
   return (
     <>
