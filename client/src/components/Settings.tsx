@@ -172,9 +172,11 @@ const Settings = () => {
         {rows.length === 0 ?
           <h1 className="m-3 text-center">Loading... 🕐</h1>
           :
-          <div className="p3 m-3">
-            <h1 className="text-center m-3"><a style={{ textDecoration: 'none' }} href="/settings">Exodus Official Urls</a></h1>
-            <DataTable rows={rows} q={q} setQuery={setQuery} />
+          <div className="col">
+            <div className="p3 m-3">
+              <h1 className="text-center m-3"><a style={{ textDecoration: 'none' }} href="/settings">Exodus Official Urls</a></h1>
+              <DataTable rows={rows} q={q} setQuery={setQuery} />
+            </div>
           </div>
         }
       </div>

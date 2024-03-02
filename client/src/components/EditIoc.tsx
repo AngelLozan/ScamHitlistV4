@@ -118,20 +118,20 @@ const EditIoc: React.FC<EditIocProps> = ({ id, onIocUpdate }) => {
     console.log("Fetch ioc: ", ioc);
     await setTheIoc(ioc);
     
-    // console.log("THE IOC: ", theIoc);
-    // setUrl(theIoc ? theIoc.url : "");
-    // setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
-    // setMethodOne("N/A");
-    // setMethodTwo("N/A");
-    // setForm(theIoc && theIoc.form !== null ? theIoc.form : "");
-    // setHost(theIoc && theIoc.host !== null ? theIoc.host : "");
-    // setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
-    // setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
-    // setComment(theIoc ? theIoc.comments : comments);
-    // setStatus(theIoc ? theIoc.status : status);
-    // setImageUrl(theIoc ? theIoc.image_url : image_url);
+    console.log("THE IOC: ", theIoc);
+    setUrl(theIoc ? theIoc.url : "");
+    setRemoved(theIoc ? new Date(theIoc.removed_date) : removed_date);
+    setMethodOne(theIoc ? theIoc.report_method_one : "N/A");
+    setMethodTwo(theIoc ? theIoc.report_method_two : "N/A");
+    setForm(theIoc && theIoc.form !== null ? theIoc.form : "");
+    setHost(theIoc && theIoc.host !== null ? theIoc.host : "");
+    setFollowUp(theIoc ? new Date(theIoc.follow_up_date) : follow_up_date);
+    setCount(theIoc ? theIoc.follow_up_count : follow_up_count)
+    setComment(theIoc ? theIoc.comments : comments);
+    setStatus(theIoc ? theIoc.status : status);
+    setImageUrl(theIoc ? theIoc.image_url : image_url);
 
-    // setFile(null);
+    setFile(null);
     } catch (e){
       console.log(e);
     }
@@ -263,23 +263,6 @@ const EditIoc: React.FC<EditIocProps> = ({ id, onIocUpdate }) => {
     fetchHosts();
   }, []);
 
-  useEffect(() => {
-  // Check if theIoc is not null
-  if (theIoc) {
-    setUrl(theIoc.url);
-    setRemoved(theIoc.removed_date ? new Date(theIoc.removed_date) : removed_date);
-    setMethodOne("N/A");
-    setMethodTwo("N/A");
-    setForm(theIoc.form ?? "");
-    setHost(theIoc.host ?? "");
-    setFollowUp(theIoc.follow_up_date ? new Date(theIoc.follow_up_date) : follow_up_date);
-    setCount(theIoc.follow_up_count ?? 0);
-    setComment(theIoc.comments ?? "");
-    setStatus(theIoc.status ?? "");
-    setImageUrl(theIoc.image_url ?? "");
-    setFile(null);
-  }
-}, [theIoc]);
 
   return (
     <>
