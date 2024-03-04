@@ -34,6 +34,12 @@ interface ShowIocProps {
 
 const ShowIoc: React.FC<ShowIocProps> = ({ id }) => {
   const [Ioc, setIoc] = useState<Ioc | null>(null);
+  const [editVisible, setEditVisible] = useState(false);
+
+  const toggleEditVisibility = () => {
+      setEditVisible(!editVisible);
+    };
+
 
   const fetchIoc = async () => {
     try {
@@ -74,11 +80,18 @@ const handleIocUpdate = () => {
           </div>
 
           <hr />
-          <div className="m-3">
-            <h3 className="text-center">Edit Ioc:</h3>
-            <p className="text-center">Changes only apply after you save them.</p>
-            < EditIoc id={Ioc.id} onIocUpdate={handleIocUpdate}/>
-          </div>
+          <p>
+           <button className="btn btn-primary" type="button" onClick={toggleEditVisibility}>
+            {editVisible ? 'Hide Edit' : 'Edit Ioc'}
+           </button>
+          </p>
+           {editVisible && (
+            <div className="m-3">
+              <h3 className="text-center">Edit Ioc:</h3>
+              <p className="text-center">Changes only apply after you save them.</p>
+              < EditIoc id={Ioc.id} onIocUpdate={handleIocUpdate}/>
+            </div>
+          )}
         </>
       ) : (
         <p>Something went wrong, please refresh the page.</p>
