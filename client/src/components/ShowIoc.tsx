@@ -73,8 +73,15 @@ const handleIocUpdate = () => {
             <p>{Ioc.url}</p>
             <p>Reported: {Ioc.created_at.toLocaleString().split("T", 1)[0]}</p>
             <p>Status: {Ioc.status}</p>
-            <p>Comments: {Ioc.comments}</p>
+            { Ioc.comments !== "" ? <p>Comments: {Ioc.comments}</p> : false }
             <p>Report Method 1: {Ioc.report_method_one}</p>
+            { Ioc.report_method_two !== "" ? <p>Report Method 2:</p> : false }
+            { Ioc.form !== "" ? <p>Form Used:</p> : false }
+            { Ioc.host !== "" ? <p>Domain Host/Registrar Emailed:</p> : false }
+            { Ioc.follow_up_date !== null ? <p>Last Follow Up Date:</p> : false }
+            <p>Number of Follow Up Attempts: {Ioc.follow_up_count}</p>
+            
+          
             {Ioc.image_url !== null ? <img src={Ioc.image_url} className="img-thumbnail" alt="Evidence file" /> : false }
             { Ioc.status === 'added' || Ioc.status === 'reported' ? <button className="btn btn-primary m-3" data-url={Ioc.url} onClick={PostZF}>Submit to ZeroFox</button> : false }
           </div>
